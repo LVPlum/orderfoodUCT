@@ -1,0 +1,348 @@
+<include file="mobile/Public/header" />
+<link rel="stylesheet" href="__CSS__/index.css">
+<link rel="stylesheet" href="__CSS__/fonts.css">
+<link rel="stylesheet" href="__CSS__/swiper/swiper.min.css">
+<link rel="stylesheet" href="__CSS__/swiper.css">
+<link rel="stylesheet" href="__CSS__/goodlist.css">
+<if condition="$_GET['list'] eq 1">
+<style>
+    /*horn*/
+    .horn-aside{ min-height: 3rem;overflow: hidden}
+    .horn-aside .horn-icon{ margin-left: 0}
+    .horn-aside .horn-icon>img{ width: 2rem ;position: relative;top: 0.4rem}
+    .horn-aside .horn-brief{ margin-left: 2.8rem ;white-space: nowrap;overflow: hidden}
+    .horn-auto-scroll{
+        position: relative;left: 0;
+    }
+    /**/
+    .index-section{
+        background: white;
+        min-height: 100px;
+        margin: 0.84rem;
+        width: 43%;
+        float: left;
+    }
+    .index-section-title{
+        padding: 5px;
+        margin: 0 5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        -moz-binding: url('ellipsis.xml#ellipsis');
+        display: inline-block;
+    }
+    .index-section-pic-box{
+        position: relative;
+        width: 90%;
+        display: inline-block;
+        float: left;
+        overflow: hidden;
+    }
+    .index-section-pic{
+        min-height: 5rem;
+        width: 100%;
+    }
+    .section-pic-tips-group{
+        position: absolute;
+        top: 0;left: -4px;z-index: 10;
+    }
+    .section-pic-tips{
+        margin-top: 5px;
+        color: white;
+        min-width: 3rem;
+        text-align: center;
+        padding: 0.2rem 0.5rem;
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+        box-shadow: 1px 1px 4px rgba(0,0,0,.3)
+    }
+    .index-section-footer{
+        text-align: left;
+        padding: 10px;
+        position: relative;
+        display: inline-block;
+        width: 90%;
+        max-height: 1rem;
+        overflow: hidden;
+    }
+    .section-btn-group{
+        position: absolute;
+        top: -1.95rem;left: 0;
+    }
+    .section-btn-group section{
+        border: thin solid #333333;
+        border-radius: 50%;
+        float: left;
+        width: 3rem;height: 3rem;
+        text-align: center;
+        margin-left: 1rem;
+        background: white;
+    }
+    .section-btn-group section img{
+        width: 1.6rem;
+        vertical-align: middle;
+    }
+    .echo-img{
+        min-height: 9rem;
+        margin: 3px;
+        background: #FFF url(/Application/Shop/Static/images/loaading.gif) no-repeat center center;
+    }
+    .fl{float: left;}
+    .fr{float: right;}
+    .w60{width: 90%}
+
+</style>
+    </if>
+<header class="bg-primary search-header color-main">
+    <div class="header-search border-box vertical-box">
+        <input id="search" class="border-box" type="text" placeholder="请输入关键字">
+        <div class="search-btn-container vertical-box"><i class="search-btn vertical-middle border-box index-icon icon-search"></i></div>
+    </div>
+    <div class="header-left vertical-box" onclick="history.back()">
+        <span class="vertical-middle">
+            <img class="img-btn" src="__IMG__/back.png">
+        </span>
+    </div>
+    <div class="header-right vertical-box" >
+        <span id="trigger" class="vertical-middle">搜索</span>
+    </div>
+</header>
+<nav class="goodlist-nav">
+    <div class="nav-left clearfix">
+        <span class="show-nav-select text-active left-2 border-box">综合排序<i class="triangle-icon"></i></span>
+        <span data-id="3" class="left-2 border-box sell_cnt">销量优先</span>
+        <!-- <span class="left-1 border-box">筛选</span> -->
+    </div>
+    <if condition="$_GET['list'] eq 1">
+        <div class="nav-right border-box" onclick="window.location.replace('?s=/shop/index/cate_product.html&cat_id=1&sort=0')">
+            <img src="__IMG__/list.png">
+        </div>
+        <else/>
+        <div class="nav-right border-box" onclick="window.location.replace('?s=/shop/index/cate_product.html&cat_id=1&sort=0&list=1')">
+            <img src="__IMG__/list_good.png">
+        </div>
+
+    </if>
+    <ul class="goodlist-nav-select border-box" data-type="price" style="display: none">
+        <li data-id="0" class="text-active">综合排序</li>
+        <li data-id="1">价格从高到低</li>
+        <li data-id="2">价格从低到高</li>
+    </ul>
+</nav>
+<div class="goodlist-nav-mask" style="display: none"></div>
+<article class="goodlist-article"  > 
+   <empty name="products.list">
+        <p class="list-bottom-tips">缺少商品，请在管理后台添加商品</p>
+    <else />
+        <foreach name="products.list" item="vo">
+    
+            <section class="index-section" onclick="window.location.href='{:U('shop/index/product',array('id'=>$vo['id']))}'">
+                <!-- <p class="index-section-title big-text"><php> echo $p['title'] </php></p> --><!--todo:字数限制-->
+                <div class="index-section-pic-box">
+                    <img class="index-section-pic echo-img" data-echo="<php> echo pic($vo['main_img']) </php>" src="<php> echo pic($vo['main_img']) </php>">
+                    <div class="section-pic-tips-group">
+                        <php>
+                        $count = 0;
+                        $status = explode(',',$vo['info']);
+                        array_walk($status,
+                            function ($a)
+                            {
+                                switch($a){
+                                case 6:
+                                echo '<p class="section-pic-tips" style="background: #fc7539;">热销</p>';
+                                break;
+                                case 7:
+                                echo '<p class="section-pic-tips" style="background: #7fbf23;">推荐</p>';
+                                break;
+                            }
+                            });
+                        </php>
+                    </div>
+                </div>
+                <p class="index-section-title big-text w60">{$vo.title}</p>
+                <div class="index-section-footer">
+                    <span class="secondary-font">￥<php> echo sprintf("%.2f", $vo['price']/100) </php></span>
+                    
+                    <php>
+                    if(!empty($vo['ori_price']) && $vo['ori_price']>$vo['price']){
+                        </php>
+                        <span class="white-tips-font small-text" style="text-decoration: line-through">￥<php> echo sprintf("%.2f", $vo['ori_price']/100) </php></span>
+                    <php>
+                    }
+                    </php>
+                    
+                        
+                    <article class="section-btn-group clearfix">
+                        <!--<section class="add-cart-btn vertical-box"><img src="__IMG__/cart.png"></section>
+                        <section class="vertical-box"><img src="/app/shop/view/wap/static/images/collect.png"></section>
+                        <section class="vertical-box"><img src="/app/shop/view/wap/static/images/share.png"></section>-->
+                    </article>
+                </div>
+                <div class="index-section-footer w60">
+                    <span class="white-tips-font small-text fl">运费：<php> echo sprintf("%.2f", $vo['price']/100) </php></span>
+                    
+                    <php>
+                    if(!empty($vo['ori_price']) && $vo['ori_price']>$vo['price']){
+                        </php>
+                        <span class="white-tips-font small-text fr"><php> echo $vo['sell_cnt'] </php>人付款</span>
+                    <php>
+                    }
+                    </php>
+                    
+                        
+                    <article class="section-btn-group clearfix">
+                        <!--<section class="add-cart-btn vertical-box"><img src="__IMG__/cart.png"></section>
+                        <section class="vertical-box"><img src="/app/shop/view/wap/static/images/collect.png"></section>
+                        <section class="vertical-box"><img src="/app/shop/view/wap/static/images/share.png"></section>-->
+                    </article>
+                </div>
+            </section>
+        </foreach>
+    </empty>
+</article>
+
+<include file="mobile/Public/nav-footer" />
+<include file="mobile/Public/footer" />
+
+<script>
+    var products = <?php echo(!empty($products) ? json_encode($products) : 'null') ?>;
+    console.log('products',products);
+    console.log(products.list[0].cat_id);
+    var cats = <?php echo(!empty($cats) ? json_encode($cats) : 'null') ?>;
+    console.log('cats',cats);  
+    // seajs.use(['zepto'], function () { 
+    //     seajs.use('fastclick', function () {
+    //         // 还原刷新前本地存储的数据
+    //         if (localStorage.htmlcontent) {
+    //          $('show-nav-select').html(localStorage.htmlcontent);
+    //         }
+    //         FastClick.attach(document.body);
+    //         /*导航*/
+    //         $('.show-nav-select').click(function () {
+    //             $('.goodlist-nav-select').toggle();
+    //             $('.goodlist-nav-mask').toggle()
+    //         });
+    //         $('.goodlist-nav-select li').click(function () {
+    //             $(this).addClass('text-active').siblings().removeClass('text-active');
+    //             $('.goodlist-nav-mask').hide();
+    //             $(this).parent().hide();
+
+    //             $(this).addClass('text-active').siblings().removeClass('text-active'); 
+    //             $('.goodlist-nav-mask').hide();
+    //             $(this).parent().hide(); 
+    //             // var url='?_easy=shop.d_wap.index.products&sort='+$(this).attr('data-id');
+    //             // window.location.href=url; 
+    //             html=$(this).html(); 
+    //             localStorage.htmlcontent=html; 
+    //             console.log(localStorage.htmlcontent);
+    //         });
+    //         $('.goodlist-nav-mask').click(function () {
+    //             $(this).hide();
+    //             $('.goodlist-nav-select').hide();
+    //         })
+    //     });
+    //     seajs.use('echo', function () {
+    //         echo.init({
+    //             offset:0
+    //         })
+    //     })
+
+    // });
+      seajs.use(['jquery'], function () {
+        
+        seajs.use('fastclick', function () {
+            FastClick.attach(document.body);
+             /*关键字搜索功能*/
+            $('#trigger').click(function(){
+                var searchContent=$('#search').val();
+                console.log('searchContent',searchContent); 
+                if (!searchContent=="") {
+                  var url=window.location.href+'&key='+searchContent;  
+                  window.location.href=url;
+                }else{alert('请输入您要搜索的内容...');}  
+            });
+             
+            /*导航*/
+            $('.show-nav-select').click(function () {
+                $('.goodlist-nav-select').toggle();
+                $('.goodlist-nav-mask').toggle()
+            }); 
+            $('.sell_cnt').click(function () {
+                $(this).addClass('text-active').siblings().removeClass('text-active');
+                var url='index.php?s=/shop/index/cate_product.html&cat_id='+products.list[0].cat_id+'&sort='+$(this).attr('data-id')+'&list='+getUrlParam('list');
+                window.location.href=url;
+                $('.goodlist-nav-select li').removeClass('text-active');
+                
+               
+            });
+            $('.goodlist-nav-select li').click(function () {
+                // $(this).addClass('text-active').siblings().removeClass('text-active'); 
+                $('.goodlist-nav-mask').hide();
+                $(this).parent().hide(); 
+                var url='index.php?s=/shop/index/cate_product.html&cat_id='+products.list[0].cat_id+'&sort='+$(this).attr('data-id')+'&list='+getUrlParam('list');
+                window.location.href=url; 
+                html=$(this).html()+'<i class="triangle-icon">'; 
+                localStorage.htmlcontent=html; 
+            });
+
+            $('.goodlist-nav-mask').click(function () {
+                $(this).hide();
+                $('.goodlist-nav-select').hide();
+            })
+            // 将对应选中的样式对应上
+            var param = getUrlParam('sort');
+            console.log(param);
+            $('.goodlist-nav-select').children('li[data-id="'+param+'"]').addClass('text-active').siblings().removeClass('text-active');
+            $('.nav-left').children('span[data-id="'+param+'"]').addClass('text-active').siblings().removeClass('text-active');
+
+        });
+        seajs.use('echo', function () {
+            echo.init({
+                offset:0
+            })
+        })
+        // 还原刷新前本地存储的数据
+        if (localStorage.htmlcontent) {
+         $('.show-nav-select').html(localStorage.htmlcontent);
+        }
+    });
+    //获取url中的参数  
+    function getUrlParam(name) {  
+       var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象  
+       var r = window.location.search.substr(1).match(reg);  //匹配目标参数  
+       if (r != null) return unescape(r[2]); return null; //返回参数值  
+    } 
+    
+    seajs.use(['jquery','echo'], function () {
+        $(document).ready(function () { 
+            seajs.use('transit',function () {
+                /*公告滚动效果*/
+                var scroll_speed = 60;//平均速度，px/秒
+                var delay_time = 1000;//延迟时间
+                $('.horn-auto-scroll').each(function () {
+                    var parent_length = $(this).closest('.horn-aside').width()-40;
+                    var length = $(this).width();
+                    if(length>parent_length){
+                        var scroll_time = length/scroll_speed*1000;
+                        var $this = $(this);
+                        function scroll() {
+                            $this.transition({
+                                'left':'-100%',
+                                'duration':scroll_time,
+                                'delay':delay_time,
+                                'complete': function (ret) {
+                                    $this.css('left',0)
+                                }
+                            })
+                        }
+                        setInterval(function () {
+                            scroll();
+                        },500);
+                    }
+                })
+            });
+        })
+    });
+</script>
+</body>
+</html>
