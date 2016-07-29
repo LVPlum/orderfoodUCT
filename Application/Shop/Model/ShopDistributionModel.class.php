@@ -12,114 +12,22 @@ class ShopDistributionModel extends Model {
 		array('status', 1, self::MODEL_INSERT),
 	);
 
-	public function add_or_edit_distribution($userLevel)
+	public function add_or_edit_distribution($data)
 	{
-		if(empty($userLevel['id'])){
-			$ret = $this->add($userLevel);
+		if(empty($data['id'])){
+			$ret = $this->add($data);
 		}else{
-			$ret = $this->where('id='.$userLevel['id'])->save($userLevel);
+			$ret = $this->where('id='.$data['id'])->save($data);
 		}
 		return $ret;
 	}
 
-	public function delete_product($ids)
+	public function get_distribution_by_uid($uid)
 	{
-		if(!is_array($ids))
-		{
-			$ids = array($ids);
-		}
-		$ret = $this->where('id in ('.implode(',',$ids).')')->delete();
-		return true;
-
-	}
-
-	/*
-	 * 获取商品信息
-	 */
-	public function get_product_by_id($id)
-	{
-		$ret = $this->where('id = '.$id)->find();
+		$ret = $this->where('user_id = '.$uid)->find();
 
 		return $ret;
 	}
 
-	public function get_product_list($option)
-	{
-		if(isset($option['cat_id']) && $option['cat_id'] >= 0) {
-			$where_arr[] = 'cat_id = '.$option['cat_id'];
-		}
-		if(isset($option['status'])) {
-			$where_arr[] = 'status = '.$option['status'];
-		}
-		if(isset($option['key'])) {
-			$where_arr[] = 'title LIKE "%'.$option['key'].'%"';
-		}
-		$where_str ='';
-		if(!empty($where_arr)) {
-			$where_str .= implode(' and ', $where_arr);
-		}
-		if($option['sort'] == 1) {
-			$sort_arr = 'price desc';
-		}
-		else if($option['sort'] == 2) {
-			$sort_arr = 'price asc';
-		}
-		else if($option['sort'] == 3) {
-			$sort_arr = 'sell_cnt desc';
-		}
-		else{
-			$sort_arr = 'sort desc, create_time';
-		}
-		$ret['list'] = $this->where($where_str)->order($sort_arr)->page($option['page'],$option['r'])->field('content,sku_table,location,delivery_id',true)->select();
-		$ret['count'] = $this->where($where_str)->count();
-
-		return $ret;
-	}
-
-
-	/*
-	 * 通过sku_id 获取商品
-	 */
-	public function get_product_by_sku_id($sku_id)
-	{
-		$sku_id = explode(';', $sku_id, 2);
-		$product_id = $sku_id[0];
-
-		$where_arr[] = 'id = '.$product_id.'';
-		$where_str ='';
-		if(!empty($where_arr)) {
-			$where_str .= implode(' and ', $where_arr);
-		}
-		$ret = $this->where($where_str)->find();
-		$ret['quantity_total'] = $ret['quantity'];
-		if(!empty($sku_id[1]) && !empty($ret['sku_table']['info'][$sku_id[1]])) {
-			$ret = array_merge($ret, $ret['sku_table']['info'][$sku_id[1]]);
-		}
-		unset($ret['sku_table']);
-		$ret['sku_id'] = $sku_id;
-		return $ret;
-	}
-
-	protected function _after_find(&$ret,$option)
-	{
-		if(!empty($ret['sku_table'])) $ret['sku_table'] = json_decode($ret['sku_table'],true);
-	}
-
-	protected function _after_select(&$ret,$option)
-	{
-		if(!empty($ret['sku_table'])) $ret['sku_table'] = json_decode($ret['sku_table'],true);
-	}
-
-
-	/*
-	 * 取某个分类、某几个分类下所有分类的商品id
-	 */
-	public function get_all_product_id_by_cat_id($cat_id)
-	{
-		is_array($cat_id) || $cat_id = array($cat_id);
-		$ret = $this->where('cat_id in ('.implode(',',$cat_id).')')->field('id')->select();
-		is_array($ret) && $ret = array_column($ret,'id');
-		return $ret;
-	}
 }
 

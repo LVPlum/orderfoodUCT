@@ -191,28 +191,35 @@ class IndexController extends Controller {
 		$uid = I('uid', '', 'intval');
 
 		if($uid){
+			$ret = $this->distribution_model->get_distribution_by_uid($this->user_id);
 
-			$data['user_id'] = $this->user_id;
-			$data['top_user_id'] = $uid;
-			$data['level'] = 1;
-			$data['total_person'] = 1;
-			$data['create_time'] = NOW_TIME;
-			$data['status'] = 1;
-
-			$this->distribution_model->add_or_edit_distribution($data);
-
-			/*if (!($mylevel = $this->distribution_model->create())){
-				$this->error($this->distribution_model->getError());
+			if(!$ret){
+				$top_distribution = $this->distribution_model->get_distribution_by_uid($uid);
+				if(!$top_distribution){
+					$top_data['user_id'] = $uid;
+					$top_data['level'] = 1;
+					$top_data['create_time'] = NOW_TIME;
+					$top_data['status'] = 1;
+					$ret = $this->distribution_model->add_or_edit_distribution($top_data);
+					if($ret){
+						$top_distribution = $this->distribution_model->get_distribution_by_uid($uid);
+					}
+				}
+				if($top_distribution['level']<4){
+					$data['user_id'] = $this->user_id;
+					$data['top_user_id'] = $uid;
+					$data['level'] = $top_distribution['level']+1;
+					$data['create_time'] = NOW_TIME;
+					$data['status'] = 1;
+					$ret = $this->distribution_model->add_or_edit_distribution($data);
+					if($ret){
+						$updata['id'] = $top_distribution['id'];
+						$updata['total_person'] = $top_distribution['total_person']+1;
+						$this->distribution_model->add_or_edit_distribution($updata);
+					}
+				}
 			}
-			$shop_distribution['user_id'] = $this->user_id;
-			
-			$ret = $this->distribution_model->add_shop_distribution($shop_distribution);
-			if ($ret){
-				$this->success('成功');
-			}
-			else{
-				$this->error('你已经添加过了');
-			}*/
+
 		}
 
 		$product = $this->product_model->get_product_by_id($id);
