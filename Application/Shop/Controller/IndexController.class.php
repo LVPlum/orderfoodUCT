@@ -24,9 +24,11 @@ class IndexController extends Controller {
 	protected $user_coupon_model;
 	protected $user_address_model;
 	protected $product_comment_model;
+	protected $distribution_model;
 	protected $weObj;
 	protected $mp_id;//公众号id
 	protected $wx_id;//微信会员id
+	protected $config;//商城设置
 
 	function _initialize(){
 		$this->product_cats_model = D('Shop/ShopProductCats');
@@ -40,6 +42,7 @@ class IndexController extends Controller {
 		$this->coupon_logic       = D('Shop/ShopCoupon', 'Logic');
 		$this->user_address_model = D('Shop/ShopUserAddress');
 		$this->product_comment_model = D('Shop/ShopProductComment');
+		$this->distribution_model = D('Shop/ShopDistribution');
 		$this->theme('mobile');
 		$this->init_shop();
 	}
@@ -53,6 +56,7 @@ class IndexController extends Controller {
 			$key = str_replace('_' . strtoupper(MODULE_NAME) . '_', '', strtoupper($v['name']));
 			$shop[strtolower($key)] = $v['value'];
 		}
+		$this->config = $shop;
 		if($shop['status'] == 0) $this->error('商城暂时停止营业。');
 		$this->mp_id = $shop['mp_id'];
 		$this->assign('mp_id', $this->mp_id);
@@ -127,6 +131,7 @@ class IndexController extends Controller {
 		$url = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 		$js_sign = $this->weObj->getJsSign($url);
 		$this->assign('js_sign', $js_sign);
+
 		//默认的分享链接
 		$surl = get_shareurl();
 		if (!empty($surl)){
@@ -181,10 +186,48 @@ class IndexController extends Controller {
 	}
 
 	public function product(){//商品详情
-		$id      = I('id', '', 'intval');
+		$this->init_user();
+		$id = I('id', '', 'intval');
+		$uid = I('uid', '', 'intval');
+
+		if($uid){
+
+			$data['user_id'] = $this->user_id;
+			$data['top_user_id'] = $uid;
+			$data['level'] = 1;
+			$data['total_person'] = 1;
+			$data['create_time'] = NOW_TIME;
+			$data['status'] = 1;
+
+			$this->distribution_model->add_or_edit_distribution($data);
+
+			/*if (!($mylevel = $this->distribution_model->create())){
+				$this->error($this->distribution_model->getError());
+			}
+			$shop_distribution['user_id'] = $this->user_id;
+			
+			$ret = $this->distribution_model->add_shop_distribution($shop_distribution);
+			if ($ret){
+				$this->success('成功');
+			}
+			else{
+				$this->error('你已经添加过了');
+			}*/
+		}
+
 		$product = $this->product_model->get_product_by_id($id);
+		
+		$sharedata = array(
+			'title'  => $this->config['title'],
+			'desc'   => $product['title'],
+			'link'   => U('shop/index/product', array('id' => $id, 'uid' => $this->user_id) ),
+			'imgUrl' => pic($product['main_img']),
+		);
+		//trace($sharedata,'forshopmodule测试','debug');
+
 		$this->assign('product', $product);
-		$this->theme('mobile')->display();
+		$this->assign('sharedata', $sharedata);
+		$this->display();
 	}
 
 	public function cart(){//购物车

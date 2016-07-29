@@ -1,5 +1,6 @@
 
 <include file="mobile/Public/header" />
+<include file="mobile/Public/wxjs" />
 
 <link rel="stylesheet" href="__CSS__/swiper/swiper.min.css">
 <link rel="stylesheet" href="__CSS__/swiper.css">
@@ -19,7 +20,7 @@
         <div class="swiper-wrapper">
             <php>
             if(!empty($product['images'])){
-	            $product['images'] = explode(',',$product['images']);
+                $product['images'] = explode(',',$product['images']);
                 foreach($product['images'] as $img){
                     </php>
                     <div class="swiper-slide"><img class="slide-img detail-nav-scale" src="<php> echo pic($img) </php>"></div>
@@ -150,7 +151,7 @@
         }
         </php>
             
-	     <section class="runcomment linear-section last-liner-section vertical-box linear-noinput" data-id="{$product['id']}" data-count="{$product['comment_cnt']}">
+         <section class="runcomment linear-section last-liner-section vertical-box linear-noinput" data-id="{$product['id']}" data-count="{$product['comment_cnt']}">
             <span class="linear-title vertical-box">宝贝评价（<php> echo $product['comment_cnt'] </php>）</span>
             <span class="linear-right vertical-box"><span class="width100">
                 <span class="tips-font">全部</span><img src="__IMG__/go.png">
@@ -186,7 +187,6 @@
 <div class="detail-shadow"></div>
 
 <include file="mobile/Public/footer" />
-
 
 <script>
     var product_id = <php> echo(!empty($product['id'])? json_encode($product['id']):"null")</php>;//useful

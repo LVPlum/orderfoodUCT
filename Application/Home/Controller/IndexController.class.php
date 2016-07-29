@@ -71,7 +71,7 @@ class IndexController extends Controller
         $map['uid'] = is_login();
         $map['id'] = $_GET ['id'];
         $mp = M('MemberPublic')->where($map)->find();
-        $this->assign('mp_id', $mp['mp_id']);
+        $this->assign('mp_id', mpid_md5($mp['appid']));
         $this->display ( );
     }
 
