@@ -18,6 +18,7 @@ class ShopController extends AdminController
     protected $user_coupon_model;
     protected $address_model;
     protected $product_comment_model;
+    protected $distribution_model;
 	protected $order_logic;
 	protected $coupon_logic;
 
@@ -33,6 +34,7 @@ class ShopController extends AdminController
 	    $this->coupon_logic = D('Shop/ShopCoupon','Logic');
 	    $this->address_model = D('Shop/ShopUserAddress');
 	    $this->product_comment_model = D('Shop/ShopProductComment');
+	    $this->distribution_model = D('Shop/ShopDistribution');
         parent::_initialize();
     }
 
@@ -2082,4 +2084,108 @@ class ShopController extends AdminController
 
     }
     //分类属性结束*/
+
+    //分销用户管理
+	public function distribution($action= '')
+	{
+		switch($action){
+			
+			case 'edit':
+				if(IS_POST){
+					$data = I('post.');
+					$ret = $this->distribution_model->add_or_edit_distribution($data);
+					if ($ret){
+						$this->success('操作成功。', U('shop/distribution'));
+					}else{
+						$this->error('操作失败。');
+					}
+				}
+				else{
+					$builder = new AdminConfigBuilder();
+					$id = I('id');
+
+					if(!empty($id)){
+						$distribution = $this->distribution_model->get_distribution_by_id($id);
+					}else{
+						$this->error('缺少id',U('shop/distribution'));
+					}
+
+					$builder->title('修改分销用户信息')
+						->keyId()
+						->keyInteger('user_id', '用户ID')
+						->keyInteger('top_user_id', '上级用户ID')
+						->keyInteger('total_person', '下级人数')
+						->keyRadio('level','分销等级','',array('1'=>'1级','2'=>'2级','3'=>'3级'))
+						->keyRadio('status','分销状态','',array('2'=>'禁用','1'=>'启用'))
+						->keyTime('create_time','加入时间')
+						->data($distribution)
+						->buttonSubmit(U('shop/distribution',array('action'=>'edit')))
+						->buttonBack()
+						->display();
+				}
+				break;
+
+			default:
+				$option['page'] = I('page',1);
+				$option['r'] = I('r',15);
+				$option['user_id'] = I('user_id');
+				$option['top_user_id'] = I('top_user_id');
+				$option['status'] = I('status');
+				$option['orderby'] = I('orderby');
+				$option['level'] = I('level');
+				$list = $this->distribution_model->get_distribution_list($option);
+				$orderby_select = array(
+						array('id' => '', 'value' => '按用户ID'),
+						array('id' => 'create_time', 'value' => '按加入时间'),
+						array('id' => 'level', 'value' => '按分销等级'),
+						array('id' => 'total_person', 'value' => '按下级人数'),
+					);
+				$level_select = array(
+						array('id' => '', 'value' => ''),
+						array('id' => 1, 'value' => '1级'),
+						array('id' => 2, 'value' => '2级'),
+						array('id' => 3, 'value' => '3级'),
+					);
+				$level_show = array(
+						1 => '1级',
+						2 => '2级',
+						3 => '3级',
+					);
+				$status_select = array(
+						array('id' => '', 'value' => ''),
+						array('id' => 1, 'value' => '启用'),
+						array('id' => 2, 'value' => '禁用'),
+					);
+				$status_show = array(
+						1 => '启用',
+						2 => '禁用',
+					);
+				$totalCount = $list['count'];
+				$builder = new AdminListBuilder();
+				$builder
+					->title('分销用户管理')
+					->setSearchPostUrl(U('shop/distribution'))
+					->search('', 'user_id', 'text', '用户id', '', '', '')
+					->search('', 'top_user_id', 'text', '上级用户id', '', '', '')
+					->select('分销状态：','status','select','','','',$status_select)
+					->select('分销等级：','level', 'select', '', '', '', $level_select)
+					->select('排序：', 'orderby', 'select', '', '', '', $orderby_select)
+					->buttonNew(U('shop/distribution'), '全部用户');
+
+				$builder
+					->keyText('user_id','用户ID')
+					->keyText('top_user_id','上级用户ID')
+					->keyMap('level','分销等级',$level_show)
+					->keyText('total_person','下级人数')
+					->keyMap('status','分销状态',$status_show)
+					->keyTime('create_time','加入时间')
+					->keyDoAction('admin/shop/distribution/action/edit/id/###','查看或编辑');
+				$builder
+					->data($list['list'])
+					->pagination($totalCount, $option['r'])
+					->display();
+			break;
+		}
+	}
+
 }

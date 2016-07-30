@@ -29,5 +29,40 @@ class ShopDistributionModel extends Model {
 		return $ret;
 	}
 
+	public function get_distribution_by_id($id)
+	{
+		$ret = $this->where('id = '.$id)->find();
+
+		return $ret;
+	}
+
+	public function get_distribution_list($option){
+		if (!empty($option['user_id'])){
+			$where_arr[] = 'user_id = ' . $option['user_id'];
+		}
+		if (!empty($option['top_user_id'])){
+			$where_arr[] = 'top_user_id = ' . $option['top_user_id'];
+		}
+		if (!empty($option['status'])){
+			$where_arr[] = 'status = ' . $option['status'];
+		}
+		if (!empty($option['level'])){
+			$where_arr[] = 'level = ' . $option['level'];
+		}
+		if (!empty($option['orderby'])){
+			$order_str = $option['orderby']=='level'?'level asc':$option['orderby'].' desc';
+		}else{
+			$order_str = 'id desc';
+		}
+		$where_str = '';
+		if (!empty($where_arr)){
+			$where_str .=  implode(' and ', $where_arr);
+		}
+		$ret['list']  = $this->where($where_str)->order($order_str)->page($option['page'], $option['r'])->select();
+		$ret['count'] = $this->where($where_str)->count();
+		return $ret;
+	}
+
+
 }
 
