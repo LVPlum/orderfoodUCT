@@ -196,6 +196,7 @@
     seajs.use('jquery', function () {
         /*todo:在网络不好的时候，js会等待图片加载完？才执行！？把ready去除就没事了，why？*/
         /*$(document).ready(function () {*/
+            $('.html-box img').css({'width':'auto','height':'auto'});
             /*轮播页*/
             seajs.use('seajs/swiper');
             /*详情*//*sku*/
