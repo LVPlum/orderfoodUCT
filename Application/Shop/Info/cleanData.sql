@@ -4,6 +4,7 @@ DROP TABLE IF EXISTS `uctoo_shop_attr_info`;
 DROP TABLE IF EXISTS `uctoo_shop_cart`;
 DROP TABLE IF EXISTS `uctoo_shop_coupon`;
 DROP TABLE IF EXISTS `uctoo_shop_delivery`;
+DROP TABLE IF EXISTS `uctoo_shop_distribution`;
 DROP TABLE IF EXISTS `uctoo_shop_messages`;
 DROP TABLE IF EXISTS `uctoo_shop_nature_field`;
 DROP TABLE IF EXISTS `uctoo_shop_nature_group`;
