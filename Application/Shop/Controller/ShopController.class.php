@@ -19,6 +19,7 @@ class ShopController extends AdminController
     protected $address_model;
     protected $product_comment_model;
     protected $distribution_model;
+    protected $distribution_rules_model;
 	protected $order_logic;
 	protected $coupon_logic;
 
@@ -35,6 +36,7 @@ class ShopController extends AdminController
 	    $this->address_model = D('Shop/ShopUserAddress');
 	    $this->product_comment_model = D('Shop/ShopProductComment');
 	    $this->distribution_model = D('Shop/ShopDistribution');
+	    $this->distribution_rules_model = D('Shop/ShopDistributionRules');
         parent::_initialize();
     }
 
@@ -2185,6 +2187,113 @@ class ShopController extends AdminController
 					->pagination($totalCount, $option['r'])
 					->display();
 			break;
+		}
+	}
+
+	//分销规则管理
+	public function distribution_rules($action= '')
+	{
+		if($action == 'edit'){
+			if(IS_POST){
+				$data = I('post.');
+				$rule = $this->distribution_rules_model->create();
+				if (!$rule){
+					$this->error($this->distribution_rules_model->getError());
+				}
+				$rule['fixed'] = I('fixed');
+				$rule['percent'] = I('percent');
+				$rule['rulefunction'] = I('rulefunction');
+				$rule['status'] = I('status');
+				$ret = $this->distribution_rules_model->add_or_edit_rules($rule);
+				//trace($ret,'测试ret','DEBUG',true);
+				if ($ret){
+					$this->success('操作成功。', U('shop/distribution_rules'));
+				}else{
+					$this->error('操作失败。');
+				}
+			}
+			else{
+				$builder = new AdminConfigBuilder();
+				$id = I('id');
+
+				if(!empty($id)){
+					$rules = $this->distribution_rules_model->get_rules_by_id($id);
+				}else{
+					$rules['status'] = 1;
+				}
+
+				$builder->title('新增/修改分销规则');
+				if($id) $builder->keyId();
+				$builder
+					->keyRadio('levelid','适用等级','',array('1'=>'1级','2'=>'2级','3'=>'3级'))
+					->keyText('rulefunction','计算公式')
+					->keyText('percent','分成比例')
+					->keyText('fixed','固定数额分成')
+					->keyRadio('status','启用状态','',array('2'=>'禁用','1'=>'启用'))
+					->data($rules)
+					->buttonSubmit(U('shop/distribution_rules',array('action'=>'edit')))
+					->buttonBack()
+					->display();
+			}
+		}else{
+			$option['page'] = I('page',1);
+			$option['r'] = I('r',10);
+			$option['user_id'] = I('user_id');
+			$option['top_user_id'] = I('top_user_id');
+			$option['status'] = I('status');
+			$option['orderby'] = I('orderby');
+			$option['level'] = I('level');
+			$rules = $this->distribution_rules_model->get_rules_list($option);
+			$orderby_select = array(
+					array('id' => '', 'value' => '按用户ID'),
+					array('id' => 'create_time', 'value' => '按时间'),
+					array('id' => 'levelid', 'value' => '按适用等级'),
+				);
+			$level_select = array(
+					array('id' => '', 'value' => ''),
+					array('id' => 1, 'value' => '1级'),
+					array('id' => 2, 'value' => '2级'),
+					array('id' => 3, 'value' => '3级'),
+				);
+			$level_show = array(
+					1 => '1级',
+					2 => '2级',
+					3 => '3级',
+				);
+			$status_select = array(
+					array('id' => '', 'value' => ''),
+					array('id' => 1, 'value' => '启用'),
+					array('id' => 2, 'value' => '禁用'),
+				);
+			$status_show = array(
+					1 => '启用',
+					2 => '禁用',
+				);
+			$totalCount = $rules['count'];
+			$builder = new AdminListBuilder();
+			$builder
+				->title('分销规则管理')
+				->setSearchPostUrl(U('shop/distribution_rules'))
+				->search('', 'user_id', 'text', '用户id', '', '', '')
+				->search('', 'top_user_id', 'text', '上级用户id', '', '', '')
+				->select('启用状态：','status','select','','','',$status_select)
+				->select('适用等级：','level', 'select', '', '', '', $level_select)
+				->select('排序：', 'orderby', 'select', '', '', '', $orderby_select)
+				->buttonNew(U('shop/distribution_rules'), '全部规则')
+				->buttonNew(U('admin/shop/distribution_rules/action/edit'), '新增规则');
+
+			$builder
+				->keyId()
+				->keyText('rulefunction','计算公式')
+				->keyText('percent','分成比例')
+				->keyText('fixed','固定数额分成')
+				->keyMap('status','启用状态',$status_show)
+				->keyMap('levelid','适用等级',$level_show)
+				->keyDoAction('admin/shop/distribution_rules/action/edit/id/###','编辑');
+			$builder
+				->data($rules['list'])
+				->pagination($totalCount, $option['r'])
+				->display();
 		}
 	}
 
