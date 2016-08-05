@@ -21,6 +21,7 @@ class ShopController extends AdminController
     protected $distribution_model;
     protected $distribution_rules_model;
     protected $distribution_orders_model;
+    protected $distribution_profit_model;
 	protected $order_logic;
 	protected $coupon_logic;
 
@@ -39,6 +40,7 @@ class ShopController extends AdminController
 	    $this->distribution_model = D('Shop/ShopDistribution');
 	    $this->distribution_rules_model = D('Shop/ShopDistributionRules');
 	    $this->distribution_orders_model = D('Shop/ShopDistributionOrders');
+	    $this->distribution_profit_model = D('Shop/ShopDistributionProfit');
         parent::_initialize();
     }
 
@@ -2303,6 +2305,17 @@ class ShopController extends AdminController
 	public function distribution_orders($action= '')
 	{
 		if($action == 'settle'){
+			$unsettle['status'] = 1;
+			$unsettle_orders = $this->distribution_orders_model->get_distribution_orders_list($unsettle);
+			//trace($unsettle_orders,'测试unsettle_orders','DEBUG',true);
+			foreach ($unsettle_orders['list'] as $row) {
+				$data['mid'] = $row['mid'];
+				$data['amount'] = $row['amount'];
+				$ret = $this->distribution_profit_model->add_or_edit_profit($data);
+				if (!$ret){
+					$this->error('结算失败。');
+				}
+			}
 			$ret = $this->distribution_orders_model->settle_distribution_orders($option);
 			if ($ret){
 				$this->success('结算成功。', U('shop/distribution_orders'));
@@ -2380,6 +2393,73 @@ class ShopController extends AdminController
 				->keyTime('create_time','生成时间');
 			$builder
 				->data($orders['list'])
+				->pagination($totalCount, $option['r'])
+				->display();
+		}
+	}
+
+	//分销收益统计
+	public function distribution_profit($action= '')
+	{
+		if($action == 'withdraw'){
+			if(IS_POST){
+				$id = I('id');
+				$price = I('price');
+				$profit = $this->distribution_profit_model->get_profit_by_id($id);
+				if($price > 0){
+					if($price > $profit['withdraw']){
+						$this->error('提现金额不能大于可提现金额。');
+					}else{
+						$data['id'] = $id;
+						$data['price'] = $price;
+						$ret = $this->distribution_profit_model->withdraw_profit($data);
+						if ($ret){
+							$this->success('提现成功。');
+						}
+						else{
+							$this->error('提现失败。');
+						}
+					}
+				}else{
+					$this->error('请输入提现金额。');
+				}
+			}else{
+				$id = I('id');
+				$profit = $this->distribution_profit_model->get_profit_by_id($id);
+				$this->assign('id', $id);
+				$this->assign('mid', $profit['mid']);
+				$this->display('Shop@Shop/withdraw_modal');
+			}
+		}else{
+			$option['page'] = I('page',1);
+			$option['r'] = I('r',15);
+			$option['mid'] = I('mid');
+			$option['orderby'] = I('orderby');
+			$profits = $this->distribution_profit_model->get_profit_list($option);
+			$orderby_select = array(
+					array('id' => '', 'value' => '按粉丝ID'),
+					array('id' => 'sum', 'value' => '按收益总额'),
+					array('id' => 'withdraw', 'value' => '按可提现金额'),
+				);
+
+			$totalCount = $profits['count'];
+			$builder = new AdminListBuilder();
+			$builder
+				->title('分销收益统计')
+				->setSearchPostUrl(U('shop/distribution_profit'))
+				->search('', 'mid', 'text', '粉丝id', '', '', '')
+				->select('排序：', 'orderby', 'select', '', '', '', $orderby_select)
+				->buttonNew(U('shop/distribution_profit'), '全部');
+
+			$builder
+				->keyId()
+				->keyText('mid','粉丝ID')
+				->keyText('sum','收益总额（分）')
+				->keyText('withdraw','可提现金额（分）')
+				->keyTime('create_time','生成时间');
+			$builder
+				->keyDoActionModalPopup('admin/shop/distribution_profit/action/withdraw/id/###','提现')
+				->data($profits['list'])
 				->pagination($totalCount, $option['r'])
 				->display();
 		}
