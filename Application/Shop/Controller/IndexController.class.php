@@ -25,6 +25,8 @@ class IndexController extends Controller {
 	protected $user_address_model;
 	protected $product_comment_model;
 	protected $distribution_model;
+	protected $distribution_rules_model;
+	protected $distribution_orders_model;
 	protected $weObj;
 	protected $mp_id;//公众号id
 	protected $wx_id;//微信会员id
@@ -43,6 +45,8 @@ class IndexController extends Controller {
 		$this->user_address_model = D('Shop/ShopUserAddress');
 		$this->product_comment_model = D('Shop/ShopProductComment');
 		$this->distribution_model = D('Shop/ShopDistribution');
+		$this->distribution_rules_model = D('Shop/ShopDistributionRules');
+		$this->distribution_orders_model = D('Shop/ShopDistributionOrders');
 		$this->theme('mobile');
 		$this->init_shop();
 	}
@@ -768,12 +772,37 @@ class IndexController extends Controller {
 			$inputs->SetOut_trade_no($odata['order_id']);
 			$result = $wxpayapi->orderQuery($inputs);
 			if(array_key_exists("return_code", $result)
-				&& array_key_exists("result_code", $result)
-				&& array_key_exists("trade_state", $result)
-				&& $result["return_code"] == "SUCCESS"
-				&& $result["result_code"] == "SUCCESS"
-				&& $result["trade_state"] == "SUCCESS"
-				){
+			&& array_key_exists("result_code", $result)
+			&& array_key_exists("trade_state", $result)
+			&& $result["return_code"] == "SUCCESS"
+			&& $result["result_code"] == "SUCCESS"
+			&& $result["trade_state"] == "SUCCESS"
+			){
+				$rule_data['page'] = 1;
+				$rule_data['r'] = 10;
+				$rules = $this->distribution_rules_model->get_rules_list($rule_data);
+				foreach($rules['list'] as $row){
+					$change_rules[$row['levelid']] = $row; 
+				}
+				$userinfo = $this->distribution_model->get_distribution_by_uid($this->user_id);
+				if($userinfo['level']>0){
+					for ($i=0; $i<3 ; $i++) { 
+						if($userinfo['top_user_id']>0){
+							$from_mid = $userinfo['user_id'];
+							$userinfo = $this->distribution_model->get_distribution_by_uid($userinfo['top_user_id']);
+							$rule = $change_rules[$userinfo['level']];
+							if($rule['percent']>0){
+								$odata['rules'][$userinfo['level']]['percent'] = $rule['percent'];
+							}
+							else if($rule['fixed']>0){
+								$odata['rules'][$userinfo['level']]['fixed'] = $rule['fixed'];
+							}
+							$odata['rules'][$userinfo['level']]['mid'] = $userinfo['user_id'];
+							$odata['rules'][$userinfo['level']]['from_mid'] = $from_mid;
+						}
+					}
+				}
+
 				$this->order_logic->AfterPayOrder($result,$odata);
 				redirect(U('shop/index/orderdetail',array('id'=>$order_id)));
 			}
@@ -827,6 +856,54 @@ class IndexController extends Controller {
 			}
 		}
 		else{
+			$this->init_user();
+			$odata['order_id'] = 54;
+			$data['total_fee'] = 1255;
+
+			$rule_data['page'] = 1;
+			$rule_data['r'] = 10;
+			$rules = $this->distribution_rules_model->get_rules_list($rule_data);
+			foreach($rules['list'] as $row){
+				$change_rules[$row['levelid']] = $row; 
+			}
+			$userinfo = $this->distribution_model->get_distribution_by_uid($this->user_id);
+			if($userinfo['level']>0){
+				for ($i=0; $i<3 ; $i++) { 
+					if($userinfo['top_user_id']>0){
+						$from_mid = $userinfo['user_id'];
+						$userinfo = $this->distribution_model->get_distribution_by_uid($userinfo['top_user_id']);
+						$rule = $change_rules[$userinfo['level']];
+						if($rule['percent']>0){
+							$odata['rules'][$userinfo['level']]['percent'] = $rule['percent'];
+						}
+						else if($rule['fixed']>0){
+							$odata['rules'][$userinfo['level']]['fixed'] = $rule['fixed'];
+						}
+						$odata['rules'][$userinfo['level']]['mid'] = $userinfo['user_id'];
+						$odata['rules'][$userinfo['level']]['from_mid'] = $from_mid;
+					}
+				}
+			}
+			foreach($odata['rules'] as $key => $row){
+				$orders_data['mid'] = $row['mid'];
+				$orders_data['from_mid'] = $row['from_mid'];
+				$orders_data['levelid'] = $key;
+				$orders_data['orderid'] = $odata['order_id'];
+				$orders_data['status'] = 1;
+				$orders_data['create_time'] = NOW_TIME;
+				if($row['percent']){
+					$orders_data['amount'] = intval($data['total_fee']*$row['percent']/100);
+				}
+				else if($row['fixed']){
+					$orders_data['amount'] = $row['fixed'];
+				}
+				$ret = $this->distribution_orders_model->add_or_edit_distribution_orders($orders_data);
+				/*if (!$ret){
+					$this->error('操作失败。');
+				}*/
+			}
+			dump($odata);exit;
+
 			$this->assign('product_id', $option['product_id']);
 			$this->display();
 		}

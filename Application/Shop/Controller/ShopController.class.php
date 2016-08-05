@@ -20,6 +20,7 @@ class ShopController extends AdminController
     protected $product_comment_model;
     protected $distribution_model;
     protected $distribution_rules_model;
+    protected $distribution_orders_model;
 	protected $order_logic;
 	protected $coupon_logic;
 
@@ -37,6 +38,7 @@ class ShopController extends AdminController
 	    $this->product_comment_model = D('Shop/ShopProductComment');
 	    $this->distribution_model = D('Shop/ShopDistribution');
 	    $this->distribution_rules_model = D('Shop/ShopDistributionRules');
+	    $this->distribution_orders_model = D('Shop/ShopDistributionOrders');
         parent::_initialize();
     }
 
@@ -2292,6 +2294,92 @@ class ShopController extends AdminController
 				->keyDoAction('admin/shop/distribution_rules/action/edit/id/###','编辑');
 			$builder
 				->data($rules['list'])
+				->pagination($totalCount, $option['r'])
+				->display();
+		}
+	}
+
+	//分销收益明细
+	public function distribution_orders($action= '')
+	{
+		if($action == 'settle'){
+			$ret = $this->distribution_orders_model->settle_distribution_orders($option);
+			if ($ret){
+				$this->success('结算成功。', U('shop/distribution_orders'));
+			}
+			else{
+				$this->error('结算失败。');
+			}
+		}else if($action == 'delete'){
+			$ids = I('ids');
+			$ret = $this->distribution_orders_model->delete_distribution_orders($ids);
+			if ($ret){
+				$this->success('删除成功。', U('shop/distribution_orders'));
+			}
+			else{
+				$this->error('删除失败。');
+			}
+		}else{
+			$option['page'] = I('page',1);
+			$option['r'] = I('r',15);
+			$option['user_id'] = I('user_id');
+			$option['top_user_id'] = I('top_user_id');
+			$option['status'] = I('status');
+			$option['orderby'] = I('orderby');
+			$option['level'] = I('level');
+			$orders = $this->distribution_orders_model->get_distribution_orders_list($option);
+			$orderby_select = array(
+					array('id' => '', 'value' => '按用户ID'),
+					array('id' => 'create_time', 'value' => '按时间'),
+					array('id' => 'levelid', 'value' => '按适用等级'),
+				);
+			$level_select = array(
+					array('id' => '', 'value' => ''),
+					array('id' => 1, 'value' => '1级'),
+					array('id' => 2, 'value' => '2级'),
+					array('id' => 3, 'value' => '3级'),
+				);
+			$level_show = array(
+					1 => '1级',
+					2 => '2级',
+					3 => '3级',
+				);
+			$status_select = array(
+					array('id' => '', 'value' => ''),
+					array('id' => 1, 'value' => '未结算'),
+					array('id' => 2, 'value' => '已结算'),
+					array('id' => 3, 'value' => '已删除'),
+				);
+			$status_show = array(
+					1 => '未结算',
+					2 => '已结算',
+					3 => '已删除',
+				);
+			$totalCount = $orders['count'];
+			$builder = new AdminListBuilder();
+			$builder
+				->title('分销收益明细')
+				->setSearchPostUrl(U('shop/distribution_orders'))
+				->search('', 'user_id', 'text', '用户id', '', '', '')
+				->search('', 'top_user_id', 'text', '上级用户id', '', '', '')
+				->select('状态：','status','select','','','',$status_select)
+				->select('分销等级：','level', 'select', '', '', '', $level_select)
+				->select('排序：', 'orderby', 'select', '', '', '', $orderby_select)
+				->buttonNew(U('shop/distribution_orders'), '全部')
+				->buttonNew(U('shop/distribution_orders',array('action'=>'settle')),'结算所有')
+				->ajaxButton(U('shop/distribution_orders',array('action'=>'delete')),'','删除');
+
+			$builder
+				->keyId()
+				->keyText('mid','粉丝ID')
+				->keyText('orderid','订单ID')
+				->keyText('from_mid','来源粉丝ID')
+				->keyMap('levelid','分销等级',$level_show)
+				->keyText('amount','收益金额（分）')
+				->keyMap('status','状态',$status_show)
+				->keyTime('create_time','生成时间');
+			$builder
+				->data($orders['list'])
 				->pagination($totalCount, $option['r'])
 				->display();
 		}

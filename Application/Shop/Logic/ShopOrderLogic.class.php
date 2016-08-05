@@ -16,6 +16,7 @@ class ShopOrderLogic extends Model{
 	protected $user_coupon_logic;
 	protected $cart_model;
 	protected $product_comment_model;
+	protected $distribution_orders_model;
 	public $error_str='';
 
 	function _initialize()
@@ -28,6 +29,7 @@ class ShopOrderLogic extends Model{
 		$this->user_coupon_logic = D('Shop/ShopUserCoupon','Logic');
 		$this->cart_model         = D('Shop/ShopCart');
 		$this->product_comment_model = D('Shop/ShopProductComment');
+		$this->distribution_orders_model = D('Shop/ShopDistributionOrders');
 		$this->product_sell_model = D('Shop/ShopProductSell');
 		$this->delivery_model = D('Shop/ShopDelivery');
 
@@ -245,6 +247,24 @@ class ShopOrderLogic extends Model{
 		$shop_order = $this->order_model->where('id ="'.$odata['aim_id'].'"')->find();
 		if(!empty($shop_order))
 		{
+			foreach($odata['rules'] as $key => $row){
+				$orders_data['mid'] = $row['mid'];
+				$orders_data['from_mid'] = $row['from_mid'];
+				$orders_data['levelid'] = $key;
+				$orders_data['orderid'] = $odata['order_id'];
+				$orders_data['create_time'] = NOW_TIME;
+				if($row['percent']){
+					$orders_data['amount'] = intval($data['total_fee']*$row['percent']/100);
+				}
+				else if($row['fixed']){
+					$orders_data['amount'] = $row['fixed'];
+				}
+				$ret = $this->distribution_orders_model->add_or_edit_distribution_orders($orders_data);
+				/*if (!$ret){
+					$this->error('操作失败。');
+				}*/
+			}
+
 			$shop_order['paid_time'] = strtotime($data['time_end']);
 			$shop_order['pay_type'] = ShopOrderModel::PAY_TYPE_WEIXINPAY;
 			$shop_order['pay_info'] =   array(

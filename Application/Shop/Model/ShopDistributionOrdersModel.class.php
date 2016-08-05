@@ -2,8 +2,8 @@
 namespace Shop\Model;
 use Think\Model;
 
-class ShopDistributionRulesModel extends Model {
-	protected $tableName = 'distribution_rules';
+class ShopDistributionOrdersModel extends Model {
+	protected $tableName = 'distribution_orders';
 	protected $_validate = array(
 		//array('uid','/[0-9]\d*/','uid参数错误',Model::MUST_VALIDATE),
 	);
@@ -11,7 +11,7 @@ class ShopDistributionRulesModel extends Model {
 		array('create_time', NOW_TIME, self::MODEL_INSERT),
 	);
 
-	public function add_or_edit_rules($data)
+	public function add_or_edit_distribution_orders($data)
 	{
 		if(empty($data['id'])){
 			$ret = $this->add($data);
@@ -21,14 +21,14 @@ class ShopDistributionRulesModel extends Model {
 		return $ret;
 	}
 
-	public function get_rules_by_id($id)
+	public function get_distribution_orders_by_id($id)
 	{
 		$ret = $this->where('id = '.$id)->find();
 
 		return $ret;
 	}
 
-	public function get_rules_list($option){
+	public function get_distribution_orders_list($option){
 		if (!empty($option['uid'])){
 			$where_arr[] = 'uid = ' . $option['user_id'];
 		}
@@ -55,7 +55,7 @@ class ShopDistributionRulesModel extends Model {
 		return $ret;
 	}
 
-	public function get_rule_one($option){
+	public function get_distribution_order_one($option){
 		if (!empty($option['uid'])){
 			$where_arr[] = 'uid = ' . $option['user_id'];
 		}
@@ -75,6 +75,35 @@ class ShopDistributionRulesModel extends Model {
 		}
 		$ret = $this->where($where_str)->find();
 		return $ret;
+	}
+
+	public function delete_distribution_orders($ids)
+	{
+		if(!is_array($ids))
+		{
+			$ids = array($ids);
+		}
+		$data['status'] = 3;
+		$ret = $this->where('id in ('.implode(',',$ids).')')->save($data);
+		return ret;
+
+	}
+
+	public function settle_distribution_orders($option='')
+	{
+		if (!empty($option['level'])){
+			$where_arr[] = 'levelid = ' . $option['level'];
+		}
+		$where_arr[] = 'status = 1';
+		
+		$where_str = '';
+		if (!empty($where_arr)){
+			$where_str .=  implode(' and ', $where_arr);
+		}
+		$data['status'] = 2;
+		$ret = $this->where($where_str)->save($data);
+		return ret;
+
 	}
 
 }
