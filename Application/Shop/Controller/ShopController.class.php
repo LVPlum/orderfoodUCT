@@ -22,6 +22,7 @@ class ShopController extends AdminController
     protected $distribution_rules_model;
     protected $distribution_orders_model;
     protected $distribution_profit_model;
+    protected $distribution_withdraw_model;
 	protected $order_logic;
 	protected $coupon_logic;
 
@@ -41,6 +42,7 @@ class ShopController extends AdminController
 	    $this->distribution_rules_model = D('Shop/ShopDistributionRules');
 	    $this->distribution_orders_model = D('Shop/ShopDistributionOrders');
 	    $this->distribution_profit_model = D('Shop/ShopDistributionProfit');
+	    $this->distribution_withdraw_model = D('Shop/ShopDistributionWithdraw');
         parent::_initialize();
     }
 
@@ -2209,7 +2211,7 @@ class ShopController extends AdminController
 				$rule['rulefunction'] = I('rulefunction');
 				$rule['status'] = I('status');
 				$ret = $this->distribution_rules_model->add_or_edit_rules($rule);
-				//trace($ret,'测试ret','DEBUG',true);
+				// trace($ret,'测试ret','DEBUG',true);
 				if ($ret){
 					$this->success('操作成功。', U('shop/distribution_rules'));
 				}else{
@@ -2241,33 +2243,12 @@ class ShopController extends AdminController
 			}
 		}else{
 			$option['page'] = I('page',1);
-			$option['r'] = I('r',10);
-			$option['user_id'] = I('user_id');
-			$option['top_user_id'] = I('top_user_id');
-			$option['status'] = I('status');
-			$option['orderby'] = I('orderby');
-			$option['level'] = I('level');
+			$option['r'] = I('r',15);
 			$rules = $this->distribution_rules_model->get_rules_list($option);
-			$orderby_select = array(
-					array('id' => '', 'value' => '按用户ID'),
-					array('id' => 'create_time', 'value' => '按时间'),
-					array('id' => 'levelid', 'value' => '按适用等级'),
-				);
-			$level_select = array(
-					array('id' => '', 'value' => ''),
-					array('id' => 1, 'value' => '1级'),
-					array('id' => 2, 'value' => '2级'),
-					array('id' => 3, 'value' => '3级'),
-				);
 			$level_show = array(
 					1 => '1级',
 					2 => '2级',
 					3 => '3级',
-				);
-			$status_select = array(
-					array('id' => '', 'value' => ''),
-					array('id' => 1, 'value' => '启用'),
-					array('id' => 2, 'value' => '禁用'),
 				);
 			$status_show = array(
 					1 => '启用',
@@ -2277,12 +2258,6 @@ class ShopController extends AdminController
 			$builder = new AdminListBuilder();
 			$builder
 				->title('分销规则管理')
-				->setSearchPostUrl(U('shop/distribution_rules'))
-				->search('', 'user_id', 'text', '用户id', '', '', '')
-				->search('', 'top_user_id', 'text', '上级用户id', '', '', '')
-				->select('启用状态：','status','select','','','',$status_select)
-				->select('适用等级：','level', 'select', '', '', '', $level_select)
-				->select('排序：', 'orderby', 'select', '', '', '', $orderby_select)
 				->buttonNew(U('shop/distribution_rules'), '全部规则')
 				->buttonNew(U('admin/shop/distribution_rules/action/edit'), '新增规则');
 
@@ -2410,6 +2385,13 @@ class ShopController extends AdminController
 					if($price > $profit['withdraw']){
 						$this->error('提现金额不能大于可提现金额。');
 					}else{
+						$wdata['mid'] = $profit['mid'];
+						$wdata['amount'] = $price;
+						$wdata['op_uid'] = UID;
+						$ret = $this->distribution_withdraw_model->add_withdraw($wdata);
+						if(!$ret){
+							$this->error('提现失败。');
+						}
 						$data['id'] = $id;
 						$data['price'] = $price;
 						$ret = $this->distribution_profit_model->withdraw_profit($data);
@@ -2463,6 +2445,43 @@ class ShopController extends AdminController
 				->pagination($totalCount, $option['r'])
 				->display();
 		}
+	}
+
+	//分销提现记录
+	public function distribution_withdraw()
+	{
+		$option['page'] = I('page',1);
+		$option['r'] = I('r',15);
+		$option['mid'] = I('mid');
+		$option['op_uid'] = I('op_uid');
+		$option['orderby'] = I('orderby');
+		$withdraws = $this->distribution_withdraw_model->get_withdraw_list($option);
+		$orderby_select = array(
+			array('id' => '', 'value' => '按提现时间'),
+			array('id' => 'mid', 'value' => '按粉丝ID'),
+			array('id' => 'amount', 'value' => '按提现金额'),
+		);
+
+		$totalCount = $withdraws['count'];
+		$builder = new AdminListBuilder();
+		$builder
+			->title('分销提现记录')
+			->setSearchPostUrl(U('shop/distribution_withdraw'))
+			->search('', 'mid', 'text', '粉丝id', '', '', '')
+			->search('', 'op_uid', 'text', '操作人uid', '', '', '')
+			->select('排序：', 'orderby', 'select', '', '', '', $orderby_select)
+			->buttonNew(U('shop/distribution_withdraw'), '全部');
+
+		$builder
+			->keyId()
+			->keyText('mid','粉丝ID')
+			->keyText('op_uid','操作人UID')
+			->keyText('amount','提现金额（分）')
+			->keyTime('create_time','提现时间');
+		$builder
+			->data($withdraws['list'])
+			->pagination($totalCount, $option['r'])
+			->display();
 	}
 
 }

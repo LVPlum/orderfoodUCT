@@ -780,6 +780,7 @@ class IndexController extends Controller {
 			){
 				$rule_data['page'] = 1;
 				$rule_data['r'] = 10;
+				$rule_data['status'] = 1;
 				$rules = $this->distribution_rules_model->get_rules_list($rule_data);
 				foreach($rules['list'] as $row){
 					$change_rules[$row['levelid']] = $row; 
