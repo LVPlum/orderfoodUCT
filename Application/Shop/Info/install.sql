@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS `uctoo_shop_cart` (
   `quantity` int(10) unsigned NOT NULL DEFAULT '1' COMMENT '件数',
   PRIMARY KEY (`id`),
   UNIQUE KEY `us` (`user_id`,`sku_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8 COMMENT='购物车';
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8 COMMENT='购物车';
 
 
 -- -----------------------------
@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS `uctoo_shop_distribution` (
   `status` tinyint(3) unsigned NOT NULL DEFAULT '2' COMMENT '1启用，2禁用',
   PRIMARY KEY (`id`),
   UNIQUE KEY `us` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COMMENT='分销用户表';
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8 COMMENT='分销用户表';
 
 
 -- -----------------------------
@@ -199,7 +199,7 @@ CREATE TABLE IF NOT EXISTS `uctoo_shop_order` (
   `products` text NOT NULL COMMENT '商品信息[{sku_id:"pruduct_id;尺寸:X;颜色:红色", paid_price:100, quantity:2, title:iphone,main_img:xxxxxx}]',
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8 COMMENT='订单';
+) ENGINE=InnoDB AUTO_INCREMENT=66 DEFAULT CHARSET=utf8 COMMENT='订单';
 
 
 -- -----------------------------
@@ -370,7 +370,7 @@ CREATE TABLE IF NOT EXISTS `uctoo_shop_user_address` (
   `address` varchar(64) NOT NULL DEFAULT '' COMMENT '详细地址',
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COMMENT='收货地址';
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 COMMENT='收货地址';
 
 
 -- -----------------------------
@@ -390,6 +390,43 @@ CREATE TABLE IF NOT EXISTS `uctoo_shop_user_coupon` (
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COMMENT='优惠券';
 
 -- -----------------------------
+-- 表内记录 `uctoo_shop_attr_field`
+-- -----------------------------
+INSERT INTO `uctoo_shop_attr_field` VALUES ('1', 'qq', '1', '1', '1', '0', 'input', '', '', '1', '1409045825', 'string', '');
+INSERT INTO `uctoo_shop_attr_field` VALUES ('2', '生日attr', '1', '1', '1', '0', 'time', '', '', '1', '1423537409', '', '请按年-月-日的格式输入');
+INSERT INTO `uctoo_shop_attr_field` VALUES ('3', '擅长语言', '2', '1', '1', '0', 'select', 'Java|C++|Python|php|object c|ruby', '', '1', '1423537693', '', '');
+INSERT INTO `uctoo_shop_attr_field` VALUES ('4', '承接项目', '2', '1', '1', '0', 'radio', '是|否', '', '1', '1423537733', '', '');
+INSERT INTO `uctoo_shop_attr_field` VALUES ('5', '简介attr', '2', '1', '1', '0', 'textarea', '', '', '1', '1423537770', '', '简单介绍入行以来的工作经验，项目经验');
+INSERT INTO `uctoo_shop_attr_field` VALUES ('6', '其他技能', '2', '1', '1', '0', 'checkbox', 'PhotoShop|Flash', '', '1', '1423537834', '', '');
+INSERT INTO `uctoo_shop_attr_field` VALUES ('7', '昵称', '3', '1', '1', '0', 'input', '', '', '1', '1423704462', 'string', 'OSC账号昵称');
+INSERT INTO `uctoo_shop_attr_field` VALUES ('9', 'test', '1', '1', '1', '0', 'input', '测试默认值', '', '1', '1466407632', 'string', '');
+-- -----------------------------
+-- 表内记录 `uctoo_shop_attr_group`
+-- -----------------------------
+INSERT INTO `uctoo_shop_attr_group` VALUES ('1', '实物商品attr', '1', '1403847366', '1', '1');
+INSERT INTO `uctoo_shop_attr_group` VALUES ('2', '虚拟商品attr', '1', '1423537648', '2', '0');
+INSERT INTO `uctoo_shop_attr_group` VALUES ('3', '其他商品', '1', '1423538446', '3', '0');
+INSERT INTO `uctoo_shop_attr_group` VALUES ('4', '123', '-1', '1466385045', '1', '1');
+INSERT INTO `uctoo_shop_attr_group` VALUES ('5', '热二位', '-1', '1466405067', '0', '0');
+INSERT INTO `uctoo_shop_attr_group` VALUES ('6', '123', '-1', '1466566059', '0', '0');
+-- -----------------------------
+-- 表内记录 `uctoo_shop_attr_info`
+-- -----------------------------
+INSERT INTO `uctoo_shop_attr_info` VALUES ('1', '1', '1', '156124198attr', '1455555555', '1466566191');
+INSERT INTO `uctoo_shop_attr_info` VALUES ('13', '1', '6', '0', '1466472399', '1466566191');
+INSERT INTO `uctoo_shop_attr_info` VALUES ('12', '1', '5', '测试简介内容啊attr', '1466472399', '1466566191');
+INSERT INTO `uctoo_shop_attr_info` VALUES ('11', '1', '4', '0', '1466472399', '1466566191');
+INSERT INTO `uctoo_shop_attr_info` VALUES ('10', '1', '3', '0', '1466472399', '1466566191');
+INSERT INTO `uctoo_shop_attr_info` VALUES ('9', '1', '2', '1464747000', '1466472399', '1466566191');
+INSERT INTO `uctoo_shop_attr_info` VALUES ('24', '1', '9', '测试测试attr', '1466490289', '1466566191');
+INSERT INTO `uctoo_shop_attr_info` VALUES ('23', '1', '7', '电饭煲电饭煲attr', '1466490289', '1466566191');
+-- -----------------------------
+-- 表内记录 `uctoo_shop_cart`
+-- -----------------------------
+INSERT INTO `uctoo_shop_cart` VALUES ('19', '1', '1467963651', '2', '2');
+INSERT INTO `uctoo_shop_cart` VALUES ('20', '0', '1467965492', '2', '1');
+INSERT INTO `uctoo_shop_cart` VALUES ('21', '0', '1468418426', '6', '1');
+-- -----------------------------
 -- 表内记录 `uctoo_shop_coupon`
 -- -----------------------------
 INSERT INTO `uctoo_shop_coupon` VALUES ('1', '1466658122', '2592000', '100', '7', '满100减99', '4', '<p>测试优惠券说明，很优惠很优惠，满100减99</p>', '0', '{\"max_cnt\":123,\"max_cnt_day\":12,\"min_price\":10000,\"discount\":9900}');
@@ -401,9 +438,12 @@ INSERT INTO `uctoo_shop_delivery` VALUES ('1', '1466989259', '运费模板一', 
 -- -----------------------------
 -- 表内记录 `uctoo_shop_distribution`
 -- -----------------------------
-INSERT INTO `uctoo_shop_distribution` VALUES ('8', '100', '0', '1469762942', '1', '1', '1');
-INSERT INTO `uctoo_shop_distribution` VALUES ('9', '104', '100', '1468376700', '3', '3', '2');
-INSERT INTO `uctoo_shop_distribution` VALUES ('10', '105', '104', '1469763059', '3', '0', '1');
+INSERT INTO `uctoo_shop_distribution` VALUES ('8', '1', '13', '1469762942', '4', '1', '1');
+INSERT INTO `uctoo_shop_distribution` VALUES ('9', '52', '12', '1468376700', '3', '3', '2');
+INSERT INTO `uctoo_shop_distribution` VALUES ('10', '12', '11', '1469763059', '2', '0', '1');
+INSERT INTO `uctoo_shop_distribution` VALUES ('11', '11', '0', '1469762942', '1', '1', '1');
+INSERT INTO `uctoo_shop_distribution` VALUES ('12', '100', '12', '1470449986', '3', '2', '1');
+INSERT INTO `uctoo_shop_distribution` VALUES ('14', '105', '100', '1470450487', '4', '0', '1');
 -- -----------------------------
 -- 表内记录 `uctoo_shop_messages`
 -- -----------------------------
@@ -411,13 +451,72 @@ INSERT INTO `uctoo_shop_messages` VALUES ('1', '0', '0', '1', '', 'sdfsdf', '146
 INSERT INTO `uctoo_shop_messages` VALUES ('2', '0', '0', '1', '', '建议网站速度快一点', '1467513437', '0');
 INSERT INTO `uctoo_shop_messages` VALUES ('3', '0', '0', '1', '', '是电饭锅电饭锅', '1467770927', '0');
 -- -----------------------------
+-- 表内记录 `uctoo_shop_nature_field`
+-- -----------------------------
+INSERT INTO `uctoo_shop_nature_field` VALUES ('1', 'qq', '1', '1', '1', '0', 'input', '', '', '1', '1409045825', 'string', '');
+INSERT INTO `uctoo_shop_nature_field` VALUES ('2', '生日', '1', '1', '1', '0', 'time', '', '', '1', '1423537409', '', '请按年-月-日的格式输入');
+INSERT INTO `uctoo_shop_nature_field` VALUES ('3', '擅长语言', '2', '1', '1', '0', 'select', 'Java|C++|Python|php|object c|ruby', '', '1', '1423537693', '', '');
+INSERT INTO `uctoo_shop_nature_field` VALUES ('4', '承接项目', '2', '1', '1', '0', 'radio', '是|否', '', '1', '1423537733', '', '');
+INSERT INTO `uctoo_shop_nature_field` VALUES ('5', '简介', '2', '1', '1', '0', 'textarea', '', '', '1', '1423537770', '', '简单介绍入行以来的工作经验，项目经验');
+INSERT INTO `uctoo_shop_nature_field` VALUES ('6', '其他技能', '2', '1', '1', '0', 'checkbox', 'PhotoShop|Flash', '', '1', '1423537834', '', '');
+INSERT INTO `uctoo_shop_nature_field` VALUES ('7', '昵称', '3', '1', '1', '0', 'input', '', '', '1', '1423704462', 'string', 'OSC账号昵称');
+INSERT INTO `uctoo_shop_nature_field` VALUES ('9', 'test', '1', '1', '1', '0', 'input', '测试默认值', '', '1', '1466407632', 'string', '');
+-- -----------------------------
+-- 表内记录 `uctoo_shop_nature_group`
+-- -----------------------------
+INSERT INTO `uctoo_shop_nature_group` VALUES ('1', '实物商品', '1', '1403847366', '2', '1');
+INSERT INTO `uctoo_shop_nature_group` VALUES ('2', '虚拟商品', '1', '1423537648', '3', '0');
+INSERT INTO `uctoo_shop_nature_group` VALUES ('3', '其他商品', '1', '1423538446', '4', '0');
+INSERT INTO `uctoo_shop_nature_group` VALUES ('4', '123', '-1', '1466385045', '1', '1');
+INSERT INTO `uctoo_shop_nature_group` VALUES ('5', '热二位', '-1', '1466405067', '0', '0');
+-- -----------------------------
+-- 表内记录 `uctoo_shop_nature_info`
+-- -----------------------------
+INSERT INTO `uctoo_shop_nature_info` VALUES ('1', '1', '1', '156124198', '1455555555', '1466496147');
+INSERT INTO `uctoo_shop_nature_info` VALUES ('13', '1', '6', '0,1', '1466472399', '1466496147');
+INSERT INTO `uctoo_shop_nature_info` VALUES ('12', '1', '5', '测试简介内容啊', '1466472399', '1466496390');
+INSERT INTO `uctoo_shop_nature_info` VALUES ('11', '1', '4', '1', '1466472399', '1466496147');
+INSERT INTO `uctoo_shop_nature_info` VALUES ('10', '1', '3', '3', '1466472399', '1466496147');
+INSERT INTO `uctoo_shop_nature_info` VALUES ('9', '1', '2', '1465472384', '1466472399', '1466496147');
+INSERT INTO `uctoo_shop_nature_info` VALUES ('38', '3', '6', '0', '1466501639', '1466566251');
+INSERT INTO `uctoo_shop_nature_info` VALUES ('39', '3', '7', '衬衫的昵称', '1466501639', '0');
+INSERT INTO `uctoo_shop_nature_info` VALUES ('24', '1', '9', '测试测试', '1466490289', '1466496147');
+INSERT INTO `uctoo_shop_nature_info` VALUES ('23', '1', '7', '电饭煲电饭煲1', '1466490289', '1466496352');
+INSERT INTO `uctoo_shop_nature_info` VALUES ('37', '3', '5', '衬衫的简介', '1466501639', '0');
+INSERT INTO `uctoo_shop_nature_info` VALUES ('36', '3', '4', '0', '1466501638', '0');
+INSERT INTO `uctoo_shop_nature_info` VALUES ('35', '3', '3', '1', '1466501638', '0');
+INSERT INTO `uctoo_shop_nature_info` VALUES ('34', '3', '2', '1466501598', '1466501638', '0');
+INSERT INTO `uctoo_shop_nature_info` VALUES ('33', '3', '1', '123123123435', '1466501638', '0');
+INSERT INTO `uctoo_shop_nature_info` VALUES ('40', '3', '9', '衬衫test', '1466501639', '0');
+-- -----------------------------
+-- 表内记录 `uctoo_shop_order`
+-- -----------------------------
+INSERT INTO `uctoo_shop_order` VALUES ('47', '0', '1467966322', '0', '0', '0', '123125', '0', '123123', '0', '0', '12', '0', '', '{\"id\":\"8\",\"user_id\":\"0\",\"modify_time\":\"1467966320\",\"name\":\"\\u674e\\u53ca\\u57fa\",\"phone\":\"13345678901\",\"province\":\"\\u5e7f\\u4e1c\\u7701\",\"city\":\"\\u5357\\u5c71\\u533a\",\"town\":\"\\u6df1\\u5733\\u5e02\",\"address\":\"\\u521b\\u65b0\\u8c37\",\"delivery\":\"express\"}', '', '{\"remark\":\"\"}', '[{\"sku_id\":\"2\",\"quantity\":\"1\",\"paid_price\":\"2\",\"title\":\"\\u773c\\u955c\\u4e8c\",\"main_img\":\"8\"}]');
+INSERT INTO `uctoo_shop_order` VALUES ('48', '1', '1469757421', '0', '0', '0', '123125', '0', '123123', '0', '0', '12', '0', '', '{\"id\":\"10\",\"user_id\":\"1\",\"modify_time\":\"1467704412\",\"name\":\"1231\",\"phone\":\"12312312312\",\"province\":\"\\u5c71\\u897f\\u7701\",\"city\":\"\\u6cfd\\u5dde\\u53bf\",\"town\":\"\\u664b\\u57ce\\u5e02\",\"address\":\"123123\",\"delivery\":\"express\"}', '', '{\"remark\":\"\"}', '[{\"sku_id\":\"2\",\"quantity\":\"1\",\"paid_price\":\"2\",\"title\":\"\\u773c\\u955c\\u4e8c\",\"main_img\":\"8\"}]');
+INSERT INTO `uctoo_shop_order` VALUES ('49', '1', '1470379384', '0', '0', '0', '11', '0', '123123', '0', '0', '1', '0', '', '{\"id\":\"10\",\"user_id\":\"1\",\"modify_time\":\"1467704412\",\"name\":\"1231\",\"phone\":\"12312312312\",\"province\":\"\\u5c71\\u897f\\u7701\",\"city\":\"\\u6cfd\\u5dde\\u53bf\",\"town\":\"\\u664b\\u57ce\\u5e02\",\"address\":\"123123\",\"delivery\":\"express\"}', '', '{\"remark\":\"\"}', '[{\"sku_id\":\"2\",\"quantity\":\"1\",\"paid_price\":\"2\",\"title\":\"\\u773c\\u955c\\u4e8c\",\"main_img\":\"8\"}]');
+INSERT INTO `uctoo_shop_order` VALUES ('50', '105', '1470379759', '0', '0', '0', '0', '0', '123123', '0', '0', '1', '0', '', '{\"id\":\"11\",\"user_id\":\"105\",\"modify_time\":\"1470379752\",\"name\":\"\\u6768\\u6d66\",\"phone\":\"15512536548\",\"province\":\"\\u9ed1\\u9f99\\u6c5f\\u7701\",\"city\":\"\\u56db\\u65b9\\u53f0\\u533a\",\"town\":\"\\u53cc\\u9e2d\\u5c71\\u5e02\",\"address\":\"\\u56de\\u6765\\u4e86\",\"delivery\":\"express\"}', '', '{\"remark\":\"\"}', '[{\"sku_id\":\"2\",\"quantity\":\"1\",\"paid_price\":\"2\",\"title\":\"\\u773c\\u955c\\u4e8c\",\"main_img\":\"8\"}]');
+INSERT INTO `uctoo_shop_order` VALUES ('51', '105', '1470379981', '1470383416', '0', '0', '1', '0', '123123', '0', '0', '2', '11', '{\"callback_time\":1470383416,\"transaction_id\":\"4009552001201608050633485050\",\"trade_type\":\"JSAPI\",\"appid\":\"wx2cdf8e0dffd4b2b2\",\"mch_id\":\"1228598202\",\"openid\":\"oWhGnjkZKRvNz7ANk40w7NTuaW08\",\"bank_type\":\"CFT\",\"fee_type\":\"CNY\",\"total_fee\":\"1\"}', '{\"id\":\"11\",\"user_id\":\"105\",\"modify_time\":\"1470379752\",\"name\":\"\\u6768\\u6d66\",\"phone\":\"15512536548\",\"province\":\"\\u9ed1\\u9f99\\u6c5f\\u7701\",\"city\":\"\\u56db\\u65b9\\u53f0\\u533a\",\"town\":\"\\u53cc\\u9e2d\\u5c71\\u5e02\",\"address\":\"\\u56de\\u6765\\u4e86\",\"delivery\":\"express\"}', '', '{\"remark\":\"\"}', '[{\"sku_id\":\"2\",\"quantity\":\"1\",\"paid_price\":\"2\",\"title\":\"\\u773c\\u955c\\u4e8c\",\"main_img\":\"8\"}]');
+INSERT INTO `uctoo_shop_order` VALUES ('52', '100', '1470449352', '1470450868', '0', '0', '1', '0', '123123', '0', '0', '2', '11', '{\"callback_time\":1470450868,\"transaction_id\":\"4007022001201608060688551920\",\"trade_type\":\"JSAPI\",\"appid\":\"wx2cdf8e0dffd4b2b2\",\"mch_id\":\"1228598202\",\"openid\":\"oWhGnjnhqdvI8x8fLGvp_OdYRlDA\",\"bank_type\":\"CFT\",\"fee_type\":\"CNY\",\"total_fee\":\"1\"}', '{\"id\":\"7\",\"user_id\":\"100\",\"modify_time\":\"1467360735\",\"name\":\"dasd\",\"phone\":\"asdas\",\"province\":\"\\u5929\\u6d25\\u5e02\",\"city\":\"\\u6cb3\\u4e1c\\u533a\",\"town\":\"\",\"address\":\"dasd\",\"delivery\":\"express\"}', '', '{\"remark\":\"\\u6d4b\\u8bd5\\u8ba2\\u5355\"}', '[{\"sku_id\":\"1\",\"quantity\":\"1\",\"paid_price\":\"12\",\"title\":\"\\u773c\\u955c\\u4e00\",\"main_img\":\"9\"},{\"sku_id\":\"2\",\"quantity\":\"1\",\"paid_price\":\"2\",\"title\":\"\\u773c\\u955c\\u4e8c\",\"main_img\":\"8\"},{\"sku_id\":\"3\",\"quantity\":\"1\",\"paid_price\":\"50000\",\"title\":\"\\u773c\\u955c\\u4e09\",\"main_img\":\"6\"}]');
+INSERT INTO `uctoo_shop_order` VALUES ('53', '105', '1470450224', '0', '0', '0', '123125', '0', '123123', '0', '0', '12', '0', '', '{\"id\":\"11\",\"user_id\":\"105\",\"modify_time\":\"1470379752\",\"name\":\"\\u6768\\u6d66\",\"phone\":\"15512536548\",\"province\":\"\\u9ed1\\u9f99\\u6c5f\\u7701\",\"city\":\"\\u56db\\u65b9\\u53f0\\u533a\",\"town\":\"\\u53cc\\u9e2d\\u5c71\\u5e02\",\"address\":\"\\u56de\\u6765\\u4e86\",\"delivery\":\"express\"}', '', '{\"remark\":\"\"}', '[{\"sku_id\":\"2\",\"quantity\":\"1\",\"paid_price\":\"2\",\"title\":\"\\u773c\\u955c\\u4e8c\",\"main_img\":\"8\"}]');
+INSERT INTO `uctoo_shop_order` VALUES ('54', '100', '1470451853', '1470452372', '0', '0', '1', '0', '123123', '0', '0', '2', '11', '{\"callback_time\":1470452372,\"transaction_id\":\"4007022001201608060690908496\",\"trade_type\":\"JSAPI\",\"appid\":\"wx2cdf8e0dffd4b2b2\",\"mch_id\":\"1228598202\",\"openid\":\"oWhGnjnhqdvI8x8fLGvp_OdYRlDA\",\"bank_type\":\"CFT\",\"fee_type\":\"CNY\",\"total_fee\":\"1\"}', '{\"id\":\"7\",\"user_id\":\"100\",\"modify_time\":\"1467360735\",\"name\":\"dasd\",\"phone\":\"asdas\",\"province\":\"\\u5929\\u6d25\\u5e02\",\"city\":\"\\u6cb3\\u4e1c\\u533a\",\"town\":\"\",\"address\":\"dasd\",\"delivery\":\"express\"}', '', '{\"remark\":\"\"}', '[{\"sku_id\":\"2\",\"quantity\":\"1\",\"paid_price\":\"2\",\"title\":\"\\u773c\\u955c\\u4e8c\",\"main_img\":\"8\"}]');
+INSERT INTO `uctoo_shop_order` VALUES ('55', '105', '1470452163', '0', '0', '0', '1', '0', '123123', '0', '0', '1', '0', '', '{\"id\":\"11\",\"user_id\":\"105\",\"modify_time\":\"1470379752\",\"name\":\"\\u6768\\u6d66\",\"phone\":\"15512536548\",\"province\":\"\\u9ed1\\u9f99\\u6c5f\\u7701\",\"city\":\"\\u56db\\u65b9\\u53f0\\u533a\",\"town\":\"\\u53cc\\u9e2d\\u5c71\\u5e02\",\"address\":\"\\u56de\\u6765\\u4e86\",\"delivery\":\"express\"}', '', '{\"remark\":\"\"}', '[{\"sku_id\":\"2\",\"quantity\":\"1\",\"paid_price\":\"2\",\"title\":\"\\u773c\\u955c\\u4e8c\",\"main_img\":\"8\"}]');
+INSERT INTO `uctoo_shop_order` VALUES ('56', '100', '1470452620', '1470453251', '0', '0', '1', '0', '123123', '0', '0', '2', '11', '{\"callback_time\":1470453252,\"transaction_id\":\"4007022001201608060690155259\",\"trade_type\":\"JSAPI\",\"appid\":\"wx2cdf8e0dffd4b2b2\",\"mch_id\":\"1228598202\",\"openid\":\"oWhGnjnhqdvI8x8fLGvp_OdYRlDA\",\"bank_type\":\"CFT\",\"fee_type\":\"CNY\",\"total_fee\":\"1\"}', '{\"id\":\"7\",\"user_id\":\"100\",\"modify_time\":\"1467360735\",\"name\":\"dasd\",\"phone\":\"asdas\",\"province\":\"\\u5929\\u6d25\\u5e02\",\"city\":\"\\u6cb3\\u4e1c\\u533a\",\"town\":\"\",\"address\":\"dasd\",\"delivery\":\"express\"}', '', '{\"remark\":\"\"}', '[{\"sku_id\":\"2\",\"quantity\":\"1\",\"paid_price\":\"2\",\"title\":\"\\u773c\\u955c\\u4e8c\",\"main_img\":\"8\"}]');
+INSERT INTO `uctoo_shop_order` VALUES ('57', '100', '1470454346', '1470454576', '0', '0', '1', '0', '123123', '0', '0', '2', '11', '{\"callback_time\":1470454577,\"transaction_id\":\"4007022001201608060692914810\",\"trade_type\":\"JSAPI\",\"appid\":\"wx2cdf8e0dffd4b2b2\",\"mch_id\":\"1228598202\",\"openid\":\"oWhGnjnhqdvI8x8fLGvp_OdYRlDA\",\"bank_type\":\"CFT\",\"fee_type\":\"CNY\",\"total_fee\":\"1\"}', '{\"id\":\"7\",\"user_id\":\"100\",\"modify_time\":\"1467360735\",\"name\":\"dasd\",\"phone\":\"asdas\",\"province\":\"\\u5929\\u6d25\\u5e02\",\"city\":\"\\u6cb3\\u4e1c\\u533a\",\"town\":\"\",\"address\":\"dasd\",\"delivery\":\"express\"}', '', '{\"remark\":\"\"}', '[{\"sku_id\":\"2\",\"quantity\":\"1\",\"paid_price\":\"2\",\"title\":\"\\u773c\\u955c\\u4e8c\",\"main_img\":\"8\"}]');
+INSERT INTO `uctoo_shop_order` VALUES ('58', '100', '1470456406', '1470456436', '0', '0', '1', '0', '123123', '0', '0', '2', '11', '{\"callback_time\":1470456436,\"transaction_id\":\"4007022001201608060695683485\",\"trade_type\":\"JSAPI\",\"appid\":\"wx2cdf8e0dffd4b2b2\",\"mch_id\":\"1228598202\",\"openid\":\"oWhGnjnhqdvI8x8fLGvp_OdYRlDA\",\"bank_type\":\"CFT\",\"fee_type\":\"CNY\",\"total_fee\":\"1\"}', '{\"id\":\"7\",\"user_id\":\"100\",\"modify_time\":\"1467360735\",\"name\":\"dasd\",\"phone\":\"asdas\",\"province\":\"\\u5929\\u6d25\\u5e02\",\"city\":\"\\u6cb3\\u4e1c\\u533a\",\"town\":\"\",\"address\":\"dasd\",\"delivery\":\"express\"}', '', '{\"remark\":\"\"}', '[{\"sku_id\":\"2\",\"quantity\":\"1\",\"paid_price\":\"2\",\"title\":\"\\u773c\\u955c\\u4e8c\",\"main_img\":\"8\"}]');
+INSERT INTO `uctoo_shop_order` VALUES ('59', '100', '1470460189', '1470460241', '0', '0', '1', '0', '123123', '0', '0', '2', '11', '{\"callback_time\":1470460242,\"transaction_id\":\"4007022001201608060702398979\",\"trade_type\":\"JSAPI\",\"appid\":\"wx2cdf8e0dffd4b2b2\",\"mch_id\":\"1228598202\",\"openid\":\"oWhGnjnhqdvI8x8fLGvp_OdYRlDA\",\"bank_type\":\"CFT\",\"fee_type\":\"CNY\",\"total_fee\":\"1\"}', '{\"id\":\"7\",\"user_id\":\"100\",\"modify_time\":\"1467360735\",\"name\":\"dasd\",\"phone\":\"asdas\",\"province\":\"\\u5929\\u6d25\\u5e02\",\"city\":\"\\u6cb3\\u4e1c\\u533a\",\"town\":\"\",\"address\":\"dasd\",\"delivery\":\"express\"}', '', '{\"remark\":\"\"}', '[{\"sku_id\":\"2\",\"quantity\":\"1\",\"paid_price\":\"2\",\"title\":\"\\u773c\\u955c\\u4e8c\",\"main_img\":\"8\"}]');
+INSERT INTO `uctoo_shop_order` VALUES ('60', '100', '1470460611', '1470460637', '0', '0', '1', '0', '123123', '0', '0', '2', '11', '{\"callback_time\":1470461573,\"transaction_id\":\"4007022001201608060702664751\",\"trade_type\":\"JSAPI\",\"appid\":\"wx2cdf8e0dffd4b2b2\",\"mch_id\":\"1228598202\",\"openid\":\"oWhGnjnhqdvI8x8fLGvp_OdYRlDA\",\"bank_type\":\"CFT\",\"fee_type\":\"CNY\",\"total_fee\":\"1\"}', '{\"id\":\"7\",\"user_id\":\"100\",\"modify_time\":\"1467360735\",\"name\":\"dasd\",\"phone\":\"asdas\",\"province\":\"\\u5929\\u6d25\\u5e02\",\"city\":\"\\u6cb3\\u4e1c\\u533a\",\"town\":\"\",\"address\":\"dasd\",\"delivery\":\"express\"}', '', '{\"remark\":\"\"}', '[{\"sku_id\":\"2\",\"quantity\":\"1\",\"paid_price\":\"2\",\"title\":\"\\u773c\\u955c\\u4e8c\",\"main_img\":\"8\"}]');
+INSERT INTO `uctoo_shop_order` VALUES ('61', '100', '1470462096', '1470462125', '0', '0', '1', '0', '123123', '0', '0', '2', '11', '{\"callback_time\":1470462125,\"transaction_id\":\"4007022001201608060702155819\",\"trade_type\":\"JSAPI\",\"appid\":\"wx2cdf8e0dffd4b2b2\",\"mch_id\":\"1228598202\",\"openid\":\"oWhGnjnhqdvI8x8fLGvp_OdYRlDA\",\"bank_type\":\"CFT\",\"fee_type\":\"CNY\",\"total_fee\":\"1\"}', '{\"id\":\"7\",\"user_id\":\"100\",\"modify_time\":\"1467360735\",\"name\":\"dasd\",\"phone\":\"asdas\",\"province\":\"\\u5929\\u6d25\\u5e02\",\"city\":\"\\u6cb3\\u4e1c\\u533a\",\"town\":\"\",\"address\":\"dasd\",\"delivery\":\"express\"}', '', '{\"remark\":\"\"}', '[{\"sku_id\":\"2\",\"quantity\":\"1\",\"paid_price\":\"2\",\"title\":\"\\u773c\\u955c\\u4e8c\",\"main_img\":\"8\"}]');
+INSERT INTO `uctoo_shop_order` VALUES ('62', '100', '1470462578', '1470462615', '0', '0', '1', '0', '123123', '0', '0', '2', '11', '{\"callback_time\":1470462615,\"transaction_id\":\"4007022001201608060704456425\",\"trade_type\":\"JSAPI\",\"appid\":\"wx2cdf8e0dffd4b2b2\",\"mch_id\":\"1228598202\",\"openid\":\"oWhGnjnhqdvI8x8fLGvp_OdYRlDA\",\"bank_type\":\"CFT\",\"fee_type\":\"CNY\",\"total_fee\":\"1\"}', '{\"id\":\"7\",\"user_id\":\"100\",\"modify_time\":\"1467360735\",\"name\":\"dasd\",\"phone\":\"asdas\",\"province\":\"\\u5929\\u6d25\\u5e02\",\"city\":\"\\u6cb3\\u4e1c\\u533a\",\"town\":\"\",\"address\":\"dasd\",\"delivery\":\"express\"}', '', '{\"remark\":\"\"}', '[{\"sku_id\":\"2\",\"quantity\":\"1\",\"paid_price\":\"2\",\"title\":\"\\u773c\\u955c\\u4e8c\",\"main_img\":\"8\"}]');
+INSERT INTO `uctoo_shop_order` VALUES ('63', '100', '1470462823', '1470462857', '0', '0', '1', '0', '123123', '0', '0', '2', '11', '{\"callback_time\":1470462857,\"transaction_id\":\"4007022001201608060704601075\",\"trade_type\":\"JSAPI\",\"appid\":\"wx2cdf8e0dffd4b2b2\",\"mch_id\":\"1228598202\",\"openid\":\"oWhGnjnhqdvI8x8fLGvp_OdYRlDA\",\"bank_type\":\"CFT\",\"fee_type\":\"CNY\",\"total_fee\":\"1\"}', '{\"id\":\"7\",\"user_id\":\"100\",\"modify_time\":\"1467360735\",\"name\":\"dasd\",\"phone\":\"asdas\",\"province\":\"\\u5929\\u6d25\\u5e02\",\"city\":\"\\u6cb3\\u4e1c\\u533a\",\"town\":\"\",\"address\":\"dasd\",\"delivery\":\"express\"}', '', '{\"remark\":\"\"}', '[{\"sku_id\":\"2\",\"quantity\":\"1\",\"paid_price\":\"2\",\"title\":\"\\u773c\\u955c\\u4e8c\",\"main_img\":\"8\"}]');
+INSERT INTO `uctoo_shop_order` VALUES ('64', '100', '1470462909', '1470462969', '0', '0', '1', '0', '0', '0', '0', '2', '11', '{\"callback_time\":1470462969,\"transaction_id\":\"4007022001201608060704672008\",\"trade_type\":\"JSAPI\",\"appid\":\"wx2cdf8e0dffd4b2b2\",\"mch_id\":\"1228598202\",\"openid\":\"oWhGnjnhqdvI8x8fLGvp_OdYRlDA\",\"bank_type\":\"CFT\",\"fee_type\":\"CNY\",\"total_fee\":\"1\"}', '{\"id\":\"7\",\"user_id\":\"100\",\"modify_time\":\"1467360735\",\"name\":\"dasd\",\"phone\":\"asdas\",\"province\":\"\\u5929\\u6d25\\u5e02\",\"city\":\"\\u6cb3\\u4e1c\\u533a\",\"town\":\"\",\"address\":\"dasd\",\"delivery\":\"\"}', '', '{\"remark\":\"\"}', '[{\"sku_id\":\"5\",\"quantity\":\"1\",\"paid_price\":\"1\",\"title\":\"\\u514d\\u8d39\\u5546\\u54c1\\u6d4b\\u8bd5\",\"main_img\":\"6\"}]');
+INSERT INTO `uctoo_shop_order` VALUES ('65', '105', '1470466355', '1470467903', '0', '0', '1', '0', '123123', '0', '0', '2', '11', '{\"callback_time\":1470467905,\"transaction_id\":\"4009552001201608060709526949\",\"trade_type\":\"JSAPI\",\"appid\":\"wx2cdf8e0dffd4b2b2\",\"mch_id\":\"1228598202\",\"openid\":\"oWhGnjkZKRvNz7ANk40w7NTuaW08\",\"bank_type\":\"CFT\",\"fee_type\":\"CNY\",\"total_fee\":\"1\"}', '{\"id\":\"11\",\"user_id\":\"105\",\"modify_time\":\"1470379752\",\"name\":\"\\u6768\\u6d66\",\"phone\":\"15512536548\",\"province\":\"\\u9ed1\\u9f99\\u6c5f\\u7701\",\"city\":\"\\u56db\\u65b9\\u53f0\\u533a\",\"town\":\"\\u53cc\\u9e2d\\u5c71\\u5e02\",\"address\":\"\\u56de\\u6765\\u4e86\",\"delivery\":\"express\"}', '', '{\"remark\":\"\"}', '[{\"sku_id\":\"2\",\"quantity\":\"1\",\"paid_price\":\"2\",\"title\":\"\\u773c\\u955c\\u4e8c\",\"main_img\":\"8\"}]');
+-- -----------------------------
 -- 表内记录 `uctoo_shop_product`
 -- -----------------------------
-INSERT INTO `uctoo_shop_product` VALUES ('1', '1', '眼镜一', '', '9', '', '0', '0', '0', '0', '1', '0', '0', '12', '23', '21', '', '', '0', '0', '0', '', '', '0', '1466392655', '1466667444', '0', '0');
-INSERT INTO `uctoo_shop_product` VALUES ('2', '1', '眼镜二', '<p>配置，特点，说明等内容....</p><p><br/></p><p><img src=\"/Uploads/Picture/2016-07-05/577b3a122a61a.jpg\" style=\"\"/></p><p><img src=\"/Uploads/Editor/Picture/2016-07-15/57887d57d91fa.jpg\" style=\"\"/></p><p><br/></p>', '8', '6,9', '0', '0', '6', '0', '19', '6', '26', '2', '20', '197', '', '', '0', '0', '0', '', '', '1', '1466493907', '1468562841', '2', '0');
-INSERT INTO `uctoo_shop_product` VALUES ('3', '1', '眼镜三', '<p>眼镜测试</p>', '6', '', '0', '0', '3', '0', '9', '3', '15', '50000', '200000000', '213', '', '', '0', '0', '0', '', '', '0', '1466493935', '1467535961', '2', '0');
-INSERT INTO `uctoo_shop_product` VALUES ('5', '2', '免费商品测试', '<p>测试免费商品</p>', '6', '', '0', '0', '6', '0', '9', '6', '23', '1', '2', '104', '', '7', '0', '0', '0', '', '', '0', '1466734485', '1468476931', '0', '0');
-INSERT INTO `uctoo_shop_product` VALUES ('6', '1', '雷朋 知书达理 ', '<table align=\"center\" data-sort=\"sortDisabled\"><tbody><tr class=\"firstRow\"><td align=\"center\" valign=\"top\" style=\"-ms-word-break: break-all;\" rowspan=\"1\" colspan=\"2\">基本信息</td></tr><tr><td width=\"222\" align=\"center\" valign=\"top\" style=\"-ms-word-break: break-all;\">产品型号</td><td width=\"222\" align=\"center\" valign=\"top\" style=\"-ms-word-break: break-all;\">5296D</td></tr><tr><td width=\"222\" align=\"center\" valign=\"top\" style=\"-ms-word-break: break-all;\">产品材料</td><td width=\"222\" align=\"center\" valign=\"top\" style=\"-ms-word-break: break-all;\">板材</td></tr><tr><td width=\"222\" align=\"center\" valign=\"top\" style=\"-ms-word-break: break-all;\">边框</td><td width=\"222\" align=\"center\" valign=\"top\" style=\"-ms-word-break: break-all;\">全框</td></tr><tr><td align=\"center\" valign=\"top\" style=\"-ms-word-break: break-all;\" rowspan=\"1\" colspan=\"1\">风格</td><td align=\"center\" valign=\"top\" style=\"-ms-word-break: break-all;\" rowspan=\"1\" colspan=\"1\">知书达理</td></tr></tbody></table><p><br/></p>', '8', '23', '0', '0', '0', '0', '0', '0', '0', '399', '688', '77', '', '6', '0', '0', '0', '', '', '0', '1468417393', '1468476210', '0', '0');
+INSERT INTO `uctoo_shop_product` VALUES ('1', '1', '眼镜一', '', '9', '', '0', '0', '0', '0', '2', '0', '0', '12', '23', '20', '', '', '0', '0', '0', '', '', '0', '1466392655', '1466667444', '0', '0');
+INSERT INTO `uctoo_shop_product` VALUES ('2', '1', '眼镜二', '<p>配置，特点，说明等内容....</p><p><br/></p><p><img src=\"/Uploads/Picture/2016-07-05/577b3a122a61a.jpg\" style=\"\"/></p><p><img src=\"/Uploads/Editor/Picture/2016-07-15/57887d57d91fa.jpg\" style=\"\"/></p><p><br/></p>', '8', '6,9', '0', '0', '6', '0', '35', '6', '26', '2', '20', '181', '', '', '0', '0', '0', '', '', '1', '1466493907', '1468562841', '2', '0');
+INSERT INTO `uctoo_shop_product` VALUES ('3', '1', '眼镜三', '<p>眼镜测试</p>', '6', '', '0', '0', '3', '0', '10', '3', '15', '50000', '200000000', '212', '', '', '0', '0', '0', '', '', '0', '1466493935', '1467535961', '2', '0');
+INSERT INTO `uctoo_shop_product` VALUES ('5', '2', '免费商品测试', '<p>测试免费商品</p>', '6', '', '0', '0', '6', '0', '10', '6', '23', '1', '2', '103', '', '7', '0', '0', '0', '', '', '0', '1466734485', '1468476931', '0', '0');
 -- -----------------------------
 -- 表内记录 `uctoo_shop_product_cats`
 -- -----------------------------
@@ -443,6 +542,32 @@ INSERT INTO `uctoo_shop_product_comment` VALUES ('16', '2', '30', '0', '1', '1',
 INSERT INTO `uctoo_shop_product_comment` VALUES ('17', '5', '32', '0', '1', '1', '1467355574', '/Uploads/Picture/2016-06-30/5774e3053084e.jpg;/Uploads/Picture/2016-06-30/5774f0b11f79d.jpg', '5', '图片测试', '5');
 INSERT INTO `uctoo_shop_product_comment` VALUES ('18', '3', '35', '0', '100', '2', '1467361857', '/Uploads/Picture/2016-07-01/57762a4119887.jpg', '5', '41231', '3');
 -- -----------------------------
+-- 表内记录 `uctoo_shop_product_sell`
+-- -----------------------------
+INSERT INTO `uctoo_shop_product_sell` VALUES ('4', '2', '23', '1', '1467103986', '2', '1', '{\"sku_id\":\"2\"}');
+INSERT INTO `uctoo_shop_product_sell` VALUES ('5', '3', '23', '1', '1467103986', '20', '1', '{\"sku_id\":\"3\"}');
+INSERT INTO `uctoo_shop_product_sell` VALUES ('6', '3', '33', '1', '1467104441', '20', '1', '{\"sku_id\":\"3\"}');
+INSERT INTO `uctoo_shop_product_sell` VALUES ('7', '2', '28', '1', '1467106595', '2', '1', '{\"sku_id\":\"2\"}');
+INSERT INTO `uctoo_shop_product_sell` VALUES ('8', '5', '28', '1', '1467106595', '0', '1', '{\"sku_id\":\"5\"}');
+INSERT INTO `uctoo_shop_product_sell` VALUES ('9', '5', '31', '1', '1467106798', '1', '1', '{\"sku_id\":\"5\"}');
+INSERT INTO `uctoo_shop_product_sell` VALUES ('10', '5', '34', '1', '1467107112', '1', '10', '{\"sku_id\":\"5\"}');
+INSERT INTO `uctoo_shop_product_sell` VALUES ('11', '5', '24', '1', '1467107679', '1', '1', '{\"sku_id\":\"5\"}');
+INSERT INTO `uctoo_shop_product_sell` VALUES ('12', '2', '20', '1', '1467107845', '2', '1', '{\"sku_id\":\"2\"}');
+INSERT INTO `uctoo_shop_product_sell` VALUES ('13', '2', '21', '1', '1467108097', '2', '1', '{\"sku_id\":\"2\"}');
+INSERT INTO `uctoo_shop_product_sell` VALUES ('14', '2', '19', '1', '1467251739', '2', '1', '{\"sku_id\":\"2\"}');
+INSERT INTO `uctoo_shop_product_sell` VALUES ('15', '5', '27', '1', '1467280198', '1', '1', '{\"sku_id\":\"5\"}');
+INSERT INTO `uctoo_shop_product_sell` VALUES ('16', '2', '30', '1', '1467281566', '2', '4', '{\"sku_id\":\"2\"}');
+INSERT INTO `uctoo_shop_product_sell` VALUES ('17', '5', '32', '1', '1467354439', '1', '1', '{\"sku_id\":\"5\"}');
+INSERT INTO `uctoo_shop_product_sell` VALUES ('18', '3', '35', '100', '1467361592', '20', '1', '{\"sku_id\":\"3\"}');
+INSERT INTO `uctoo_shop_product_sell` VALUES ('19', '2', '39', '1', '1467689374', '2', '1', '{\"sku_id\":\"2\"}');
+-- -----------------------------
+-- 表内记录 `uctoo_shop_quick_order`
+-- -----------------------------
+INSERT INTO `uctoo_shop_quick_order` VALUES ('19', '1', '1466670304', '1467251739', '', '{\"id\":\"6\",\"user_id\":\"1\",\"modify_time\":\"1466650256\",\"name\":\"\\u9ece\\u9526\\u826f\",\"phone\":\"13345678901\",\"province\":\"\\u5e7f\\u4e1c\\u7701\",\"city\":\"\\u5357\\u5c71\\u533a\",\"town\":\"\\u6df1\\u5733\\u5e02\",\"address\":\"\\u521b\\u65b0\\u8c37\",\"delivery\":\"\"}', '{\"remark\":\"\"}', '0', '', '0');
+INSERT INTO `uctoo_shop_quick_order` VALUES ('36', '1', '1467513051', '0', '', '{\"id\":\"8\",\"user_id\":\"1\",\"modify_time\":\"1467512962\",\"name\":\"\\u674e\\u53ca\\u57fa\",\"phone\":\"13345678901\",\"province\":\"\\u5e7f\\u4e1c\\u7701\",\"city\":\"\\u5357\\u5c71\\u533a\",\"town\":\"\\u6df1\\u5733\\u5e02\",\"address\":\"\\u521b\\u65b0\\u8c37\",\"delivery\":\"express\"}', '{\"remark\":\"123123\"}', '0', '', '0');
+INSERT INTO `uctoo_shop_quick_order` VALUES ('38', '1', '1467600987', '0', '{\"info\":\"this is test pay\"}', '{\"id\":\"8\",\"user_id\":\"1\",\"modify_time\":\"1467536326\",\"name\":\"\\u674e\\u53ca\\u57fa\",\"phone\":\"13345678901\",\"province\":\"\\u5e7f\\u4e1c\\u7701\",\"city\":\"\\u5357\\u5c71\\u533a\",\"town\":\"\\u6df1\\u5733\\u5e02\",\"address\":\"\\u521b\\u65b0\\u8c37\",\"delivery\":\"\"}', '{\"remark\":\"\"}', '0', '', '0');
+INSERT INTO `uctoo_shop_quick_order` VALUES ('39', '1', '1467601129', '1467689374', '{\"info\":\"this is test pay\"}', '{\"id\":\"8\",\"user_id\":\"1\",\"modify_time\":\"1467536326\",\"name\":\"\\u674e\\u53ca\\u57fa\",\"phone\":\"13345678901\",\"province\":\"\\u5e7f\\u4e1c\\u7701\",\"city\":\"\\u5357\\u5c71\\u533a\",\"town\":\"\\u6df1\\u5733\\u5e02\",\"address\":\"\\u521b\\u65b0\\u8c37\",\"delivery\":\"express\"}', '{\"remark\":\"\"}', '0', '', '0');
+-- -----------------------------
 -- 表内记录 `uctoo_shop_remark`
 -- -----------------------------
 INSERT INTO `uctoo_shop_remark` VALUES ('5', '38', '1', 'saewdasd', '1467769316', '0');
@@ -457,3 +582,18 @@ INSERT INTO `uctoo_shop_remark` VALUES ('10', '43', '1', 'sdfsdfsdfsdf', '146794
 INSERT INTO `uctoo_shop_slides` VALUES ('1', '5', '商品推荐', 'http://m.baidu.com', '1466660316', '0', '0');
 INSERT INTO `uctoo_shop_slides` VALUES ('2', '6', '节日活动', 'http://m.baidu.com', '1466667182', '0', '0');
 INSERT INTO `uctoo_shop_slides` VALUES ('3', '8', '水电费', 'http://m.baidu.com', '1466668005', '0', '0');
+-- -----------------------------
+-- 表内记录 `uctoo_shop_user_address`
+-- -----------------------------
+INSERT INTO `uctoo_shop_user_address` VALUES ('7', '100', '1467360735', 'dasd', 'asdas', '天津市', '河东区', '', 'dasd');
+INSERT INTO `uctoo_shop_user_address` VALUES ('8', '0', '1467966320', '李及基', '13345678901', '广东省', '南山区', '深圳市', '创新谷');
+INSERT INTO `uctoo_shop_user_address` VALUES ('9', '1', '1467704350', '123', '12312312312', '广东省', '龙岗区', '深圳市', '尔特人');
+INSERT INTO `uctoo_shop_user_address` VALUES ('10', '1', '1467704412', '1231', '12312312312', '山西省', '泽州县', '晋城市', '123123');
+INSERT INTO `uctoo_shop_user_address` VALUES ('11', '105', '1470379752', '杨浦', '15512536548', '黑龙江省', '四方台区', '双鸭山市', '回来了');
+-- -----------------------------
+-- 表内记录 `uctoo_shop_user_coupon`
+-- -----------------------------
+INSERT INTO `uctoo_shop_user_coupon` VALUES ('9', '1', '1467517017', '0', '0', '0', '2', '{\"title\":\"\\u8282\\u65e5\\u4f18\\u60e0\",\"img\":\"13\",\"valuation\":\"0\",\"rule\":{\"max_cnt\":33,\"max_cnt_day\":3,\"min_price\":223,\"discount\":222}}');
+INSERT INTO `uctoo_shop_user_coupon` VALUES ('10', '1', '1467517063', '1470109063', '0', '0', '1', '{\"title\":\"\\u6ee1100\\u51cf99\",\"img\":\"4\",\"valuation\":\"0\",\"rule\":{\"max_cnt\":123,\"max_cnt_day\":12,\"min_price\":10000,\"discount\":9900}}');
+INSERT INTO `uctoo_shop_user_coupon` VALUES ('11', '1', '1467517301', '0', '46', '0', '2', '{\"title\":\"\\u8282\\u65e5\\u4f18\\u60e0\",\"img\":\"13\",\"valuation\":\"0\",\"rule\":{\"max_cnt\":33,\"max_cnt_day\":3,\"min_price\":223,\"discount\":222}}');
+INSERT INTO `uctoo_shop_user_coupon` VALUES ('12', '107', '1470099312', '1472691312', '0', '0', '1', '{\"title\":\"\\u6ee1100\\u51cf99\",\"img\":\"4\",\"valuation\":\"0\",\"rule\":{\"max_cnt\":123,\"max_cnt_day\":12,\"min_price\":10000,\"discount\":9900}}');
