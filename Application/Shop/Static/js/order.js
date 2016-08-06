@@ -13,6 +13,9 @@ define(function (require,exports,module) {
         weixinpay: function (id) {
             window.location.replace('/index.php/shop/index/jsApiPay/order_id/'+id)
         },
+        pay: function (id,type) {
+            window.location.replace('/index.php/shop/index/pay/order_id/'+id+'/type/'+type)
+        },
         accept: function (id) {
             if(confirm('您确定要确认收货吗？')){
                 $.post('/index.php?s=shop/index/do_receipt',{id:id}, function (ret) {

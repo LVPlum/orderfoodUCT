@@ -29,22 +29,25 @@ class ShopDistributionOrdersModel extends Model {
 	}
 
 	public function get_distribution_orders_list($option){
-		if (!empty($option['uid'])){
-			$where_arr[] = 'uid = ' . $option['user_id'];
+		if (!empty($option['mid'])){
+			$where_arr[] = 'mid = ' . $option['mid'];
 		}
-		if (!empty($option['top_user_id'])){
-			$where_arr[] = 'top_user_id = ' . $option['top_user_id'];
+		if (!empty($option['from_mid'])){
+			$where_arr[] = 'from_mid = ' . $option['from_mid'];
+		}
+		if (!empty($option['orderid'])){
+			$where_arr[] = 'orderid = ' . $option['orderid'];
 		}
 		if (!empty($option['status'])){
 			$where_arr[] = 'status = ' . $option['status'];
 		}
-		if (!empty($option['level'])){
-			$where_arr[] = 'level = ' . $option['level'];
+		if (!empty($option['levelid'])){
+			$where_arr[] = 'levelid = ' . $option['levelid'];
 		}
 		if (!empty($option['orderby'])){
-			$order_str = $option['orderby']=='level'?'level asc':$option['orderby'].' desc';
+			$order_str = $option['orderby'].' desc';
 		}else{
-			$order_str = 'id desc';
+			$order_str = 'create_time desc';
 		}
 		$where_str = '';
 		if (!empty($where_arr)){

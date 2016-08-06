@@ -120,7 +120,7 @@
                     })
                     .on('click','.pay-order-btn',function () {
                         var id = $(this).data('id');
-                        order.pay(id)
+                        order.weixinpay(id)
                     })
                     .on('click','.accept-order-btn',function () {
                         var id = $(this).data('id');

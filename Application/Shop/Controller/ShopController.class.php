@@ -347,7 +347,7 @@ class ShopController extends AdminController
 				$option['user_id'] = I('user_id',0);
 				//$option['min_time'] = I('min_time',0);
 				$option['page'] = I('page',1);
-				$option['r'] = I('r',10);
+				$option['r'] = I('r',15);
 				$product_sell_model = D('shop/ShopProductSell');
 				$product_sell_record = $product_sell_model->get_sell_record($option);
 				$totalCount = $product_sell_record['count'];
@@ -432,7 +432,7 @@ class ShopController extends AdminController
 				break;
 			default:
 				$option['page'] = I('page',1);
-				$option['r'] = I('r',10);
+				$option['r'] = I('r',15);
 				$option['cat_id'] = I('cat_id');
 				$count = I('count');
 				if(empty($option['cat_id'])) unset($option['cat_id']);
@@ -730,7 +730,7 @@ class ShopController extends AdminController
 
 			default:
 				$option['page'] = I('page',1);
-				$option['r'] = I('r',10);
+				$option['r'] = I('r',15);
 				$option['user_id'] = I('user_id');
 				$option['status'] = I('status');
 				$option['key'] = I('key');
@@ -919,7 +919,7 @@ class ShopController extends AdminController
 				break;
 			default :
 				$option['page'] = I('page',1);
-				$option['r'] = I('r',10);
+				$option['r'] = I('r',15);
 				$message = $this->message_model->get_shop_message_list($option);
 				$totalCount = $message['count'];
 
@@ -1118,7 +1118,7 @@ class ShopController extends AdminController
 			default:
 				$option['id'] = I('id');
 				$option['page'] = I('page',1);
-				$option['r'] = I('r',10);
+				$option['r'] = I('r',15);
 				$user_coupon = $this->user_coupon_model->get_user_coupon_list($option);
 
 				empty($user_coupon['list']) ||
@@ -1186,7 +1186,7 @@ class ShopController extends AdminController
 				break;
 			default:
 				$option['page'] = I('page','1','intval');
-				$option['r'] = I('r','10','intval');
+				$option['r'] = I('r','15','intval');
 				$product_comment  = $this->product_comment_model->get_product_comment_list($option);
 				$builder = new AdminListBuilder();
 				$builder
@@ -2310,16 +2310,17 @@ class ShopController extends AdminController
 		}else{
 			$option['page'] = I('page',1);
 			$option['r'] = I('r',15);
-			$option['user_id'] = I('user_id');
-			$option['top_user_id'] = I('top_user_id');
+			$option['mid'] = I('mid');
+			$option['from_mid'] = I('from_mid');
+			$option['orderid'] = I('orderid');
 			$option['status'] = I('status');
+			$option['levelid'] = I('levelid');
 			$option['orderby'] = I('orderby');
-			$option['level'] = I('level');
 			$orders = $this->distribution_orders_model->get_distribution_orders_list($option);
 			$orderby_select = array(
-					array('id' => '', 'value' => '按用户ID'),
-					array('id' => 'create_time', 'value' => '按时间'),
-					array('id' => 'levelid', 'value' => '按适用等级'),
+					array('id' => '', 'value' => '按创建时间'),
+					array('id' => 'amount', 'value' => '按收益金额'),
+					array('id' => 'orderid', 'value' => '按订单ID'),
 				);
 			$level_select = array(
 					array('id' => '', 'value' => ''),
@@ -2348,10 +2349,11 @@ class ShopController extends AdminController
 			$builder
 				->title('分销收益明细')
 				->setSearchPostUrl(U('shop/distribution_orders'))
-				->search('', 'user_id', 'text', '用户id', '', '', '')
-				->search('', 'top_user_id', 'text', '上级用户id', '', '', '')
+				->search('', 'mid', 'text', '粉丝id', '', '', '')
+				->search('', 'from_mid', 'text', '来源粉丝id', '', '', '')
+				->search('', 'orderid', 'text', '订单id', '', '', '')
 				->select('状态：','status','select','','','',$status_select)
-				->select('分销等级：','level', 'select', '', '', '', $level_select)
+				->select('分销等级：','levelid', 'select', '', '', '', $level_select)
 				->select('排序：', 'orderby', 'select', '', '', '', $orderby_select)
 				->buttonNew(U('shop/distribution_orders'), '全部')
 				->buttonNew(U('shop/distribution_orders',array('action'=>'settle')),'结算所有')
@@ -2365,7 +2367,7 @@ class ShopController extends AdminController
 				->keyMap('levelid','分销等级',$level_show)
 				->keyText('amount','收益金额（分）')
 				->keyMap('status','状态',$status_show)
-				->keyTime('create_time','生成时间');
+				->keyTime('create_time','创建时间');
 			$builder
 				->data($orders['list'])
 				->pagination($totalCount, $option['r'])
