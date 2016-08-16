@@ -3,7 +3,7 @@ namespace Shop\Model;
 use Think\Model;
 
 class ShopDistributionWithdrawModel extends Model {
-	protected $tableName = 'distribution_withdraw';
+	protected $tableName = 'shop_distri_withdraw';
 	protected $_validate = array(
 		//array('uid','/[0-9]\d*/','uid参数错误',Model::MUST_VALIDATE),
 	);

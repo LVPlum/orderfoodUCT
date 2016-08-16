@@ -3,7 +3,7 @@ namespace Shop\Model;
 use Think\Model;
 
 class ShopDistributionProfitModel extends Model {
-	protected $tableName = 'distribution_profit';
+	protected $tableName = 'shop_distri_profit';
 	protected $_validate = array(
 		//array('uid','/[0-9]\d*/','uid参数错误',Model::MUST_VALIDATE),
 	);
