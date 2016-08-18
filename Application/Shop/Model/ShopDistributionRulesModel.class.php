@@ -62,6 +62,10 @@ class ShopDistributionRulesModel extends Model {
 		$ret = $this->where($where_str)->find();
 		return $ret;
 	}
+	public function delete_rules($option){
+		$ret = $this->where('id ='.$option)->delete();
+		return $ret;
+	}
 
 }
 

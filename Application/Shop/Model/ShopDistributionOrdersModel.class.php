@@ -28,6 +28,17 @@ class ShopDistributionOrdersModel extends Model {
 		return $ret;
 	}
 
+	public function get_distribution_orders_by_ids($ids)
+	{
+		if(!is_array($ids))
+		{
+			$ids = array($ids);
+		}
+		$ids=implode(',',$ids);
+		$ret = $this->where('id in ('.$ids.')')->select();
+		return $ret;
+	}
+
 	public function get_distribution_orders_list($option){
 		if (!empty($option['mid'])){
 			$where_arr[] = 'mid = ' . $option['mid'];
@@ -87,8 +98,9 @@ class ShopDistributionOrdersModel extends Model {
 			$ids = array($ids);
 		}
 		$data['status'] = 3;
-		$ret = $this->where('id in ('.implode(',',$ids).')')->save($data);
-		return ret;
+		$ids=implode(',',$ids);
+		$ret = $this->where('id in ('.$ids.')')->delete($data);
+		return $ret;
 
 	}
 
@@ -106,6 +118,19 @@ class ShopDistributionOrdersModel extends Model {
 		$data['status'] = 2;
 		$ret = $this->where($where_str)->save($data);
 		return ret;
+
+	}
+	public function settlesome_distribution_orders($ids='')
+	{
+		if(!is_array($ids))
+		{
+			$ids = array($ids);
+		}
+		$data['status'] = 2;
+		$ids=implode(',',$ids);
+		$ret = $this->where('id in ('.$ids.')')->save($data);
+		return $ret;
+
 
 	}
 

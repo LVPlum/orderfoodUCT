@@ -27,6 +27,7 @@ class IndexController extends Controller {
 	protected $distribution_model;
 	protected $distribution_rules_model;
 	protected $distribution_orders_model;
+	protected $distribution_profit_model;
 	protected $weObj;
 	protected $mp_id;//公众号id
 	protected $wx_id;//微信会员id
@@ -47,6 +48,7 @@ class IndexController extends Controller {
 		$this->distribution_model = D('Shop/ShopDistribution');
 		$this->distribution_rules_model = D('Shop/ShopDistributionRules');
 		$this->distribution_orders_model = D('Shop/ShopDistributionOrders');
+		$this->distribution_profit_model = D('Shop/ShopDistributionProfit');
 		$this->theme('mobile');
 		$this->init_shop();
 	}
@@ -162,7 +164,23 @@ class IndexController extends Controller {
 		$option['parent_id'] = 0;
 		$cats = $this->product_cats_model->get_product_cats($option);
 		//header("Content-type:text/html;charset=utf-8");dump($cats);exit;
+
 		$this->assign('cats', $cats);
+		$this->display();
+	}
+
+	//一个分类下的子分类
+	public function cate_sun(){
+		$option['page']   = I('page', '1', 'intval');
+		$option['r']      = I('r', '10', 'intval');
+		$option['cat_id'] = I('cat_id', '', 'intval');
+		//dump($option['cat_id']);
+		if (empty($option['cat_id'])){
+			unset($option['cat_id']);
+		}
+		$option['status'] = 1;//启用
+		$cats_sun = $this->product_cats_model->get_product_cats_sun($option);
+		$this->assign('cats', $cats_sun);
 		$this->display();
 	}
 
@@ -195,9 +213,10 @@ class IndexController extends Controller {
 		$uid = I('uid', '', 'intval');
 
 		if($uid){
+			//判断购买者是否分销者
 			$ret = $this->distribution_model->get_distribution_by_uid($this->user_id);
-
 			if(!$ret){
+				//判断分享者是否分销者
 				$top_distribution = $this->distribution_model->get_distribution_by_uid($uid);
 				if(!$top_distribution){
 					$top_data['user_id'] = $uid;
@@ -878,5 +897,42 @@ class IndexController extends Controller {
 			$ret2[$l]['center'] =$a['4'].','.$a['5'];
 		}
 		$this->ajaxreturn($ret2);
+	}
+	public function distribution(){
+		$this->init_user();
+		$uid = $this->user_id;
+		$distribution = $this->distribution_model->get_distribution_by_uid($uid);
+		$option['mid'] = $distribution['user_id'];
+		$profit = $this->distribution_profit_model->get_profit_one($option);
+		$profit['sum'] = $profit['sum']/100;
+		$profit['withdraw'] = $profit['withdraw']/100;
+		$ucuser = M('ucuser')->where('mid ='.$distribution['user_id'])->find();
+		$this->assign('distribution',$distribution);
+		$this->assign('profit',$profit);
+		$this->assign('ucuser',$ucuser);
+		$this->display();
+	}
+
+	public function bank(){
+		$this->init_user();
+		$data['mid'] = $this->user_id;
+		if (IS_POST){
+			//提交处理
+			$data['phone'] = I('brief');
+			$ret = $this->distribution_model->add_or_edit_distribution_bank($data);
+			$sql = $this->distribution_model->getLastSql();
+			if ($ret){
+				$this->success($sql.'提交成功。');
+			}
+			else{
+				$this->error($sql.'提交失败。');
+			}
+		}
+		else{
+			$distribution = $this->distribution_model->get_distribution_by_uid($data['mid']);
+			//dump($distribution);
+			$this->assign('distribution',$distribution);
+			$this->display();
+		}
 	}
 }

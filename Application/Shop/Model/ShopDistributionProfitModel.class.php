@@ -18,7 +18,7 @@ class ShopDistributionProfitModel extends Model {
 			$data['update_time'] = NOW_TIME;
 			$ret = $this->where('mid='.$data['mid'])->setInc('sum',$data['amount']);
 			$ret = $this->where('mid='.$data['mid'])->setInc('withdraw',$data['amount']);
-			$ret = $this->where('mid='.$data['mid'])->save($data);
+			//$ret = $this->where('mid='.$data['mid'])->save($data);
 		}
 		else{
 			$data['sum'] = $data['amount'];

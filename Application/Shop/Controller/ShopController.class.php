@@ -217,6 +217,8 @@ class ShopController extends AdminController
 			case 'delete':
 				$ids = I('ids');
 				$ret = $this->product_cats_model->delete_product_cats($ids);
+				//$sql = $this->product_cats_model->getLastSql();
+				//$this->error($sql.'输出');
 				if ($ret){
 					$this->success('操作成功。', U('shop/product_cats'));
 				}
@@ -1155,7 +1157,7 @@ class ShopController extends AdminController
 				break;
 		}
 	}
-  
+
 	/*
 	 *商品评论
 	 */
@@ -1184,6 +1186,16 @@ class ShopController extends AdminController
 				//var_dump(__file__.' line:'.__line__,$ret);exit;
 				$this->display('Shop@Shop/show_pic');
 				break;
+			case 'delete':
+				$id = I('id');
+				$ret = $this->product_comment_model->delete_product_comment($id);
+				if ($ret){
+					$this->success('操作成功。', U('shop/product_comment'));
+				}
+				else{
+					$this->error('操作失败。');
+				}
+				break;
 			default:
 				$option['page'] = I('page','1','intval');
 				$option['r'] = I('r','15','intval');
@@ -1202,6 +1214,7 @@ class ShopController extends AdminController
 					->keyTime('create_time','评论时间')
 					->keyMap('status','状态',array('0'=>'未审核','1'=>'已通过','2'=>'未通过'))
 					->keyDoActionModalPopup('admin/shop/product_comment/action/show_pic/id/###','查看评论图片','操作')
+					->keyDoAction('admin/shop/product_comment/action/delete/id/###','删除')
 					->data($product_comment['list'])
 					->pagination($product_comment['count'], $option['r'])
 					->display();
@@ -1306,7 +1319,7 @@ class ShopController extends AdminController
          			$map['createTime'] = time();
          			$res = D('shop_nature_info')->add($map);
          		}
-         		
+
          	}
          	if ($res) {
             	$this->success(L('_SUCCESS_OPERATE_').L('_EXCLAMATION_'));
@@ -1366,7 +1379,7 @@ class ShopController extends AdminController
     }
 
     /**商品属性管理页
-     * @param 
+     * @param
      * @author 郑钟良<zzl@ourstu.com>
      * @version 20160617
      */
@@ -1659,6 +1672,18 @@ class ShopController extends AdminController
      */
     public function cateAttrList($page = 1, $r = 20)
     {
+		$action = I('action');
+		if($action == 'delete') {
+			$val['id'] = I('id');
+			$ret = M('Shop_product_cats')->where($val)->delete();
+			if ($ret){
+				$this->success('操作成功。', U('shop/cateAttrList'));
+			}
+			else{
+				$this->error('操作失败。');
+			}
+		}
+
         $title = I('title');
         $map['status'] = array('egt', 0);
         if (is_numeric($title)) {
@@ -1710,7 +1735,9 @@ class ShopController extends AdminController
         foreach ($fields_list as $vt) {
             $builder->keyText($vt['field_name'], $vt['field_name']);
         }
-        $builder->keyDoAction('Shop/cateAttrDetails?id=###','编辑')->data($list);
+        $builder->keyDoAction('Shop/cateAttrDetails?id=###','编辑')
+			    ->keyDoAction('Shop/cateAttrList?action=delete&id=###','删除')
+			    ->data($list);
         $builder->pagination($totalCount, $r);
         $builder->display();
     }
@@ -1748,7 +1775,7 @@ class ShopController extends AdminController
                     $map['createTime'] = time();
                     $res = D('shop_attr_info')->add($map);
                 }
-                
+
             }
             if ($res) {
                 $this->success(L('_SUCCESS_OPERATE_').L('_EXCLAMATION_'));
@@ -1808,7 +1835,7 @@ class ShopController extends AdminController
     }
 
     /**分类属性管理页
-     * @param 
+     * @param
      * @author 郑钟良<zzl@ourstu.com>
      * @version 20160617
      */
@@ -2097,7 +2124,7 @@ class ShopController extends AdminController
 	public function distribution($action= '')
 	{
 		switch($action){
-			
+
 			case 'edit':
 				if(IS_POST){
 					$data = I('post.');
@@ -2114,14 +2141,27 @@ class ShopController extends AdminController
 
 					if(!empty($id)){
 						$distribution = $this->distribution_model->get_distribution_by_id($id);
+						$user = M('ucuser');
+						$distribution['user_name']=$user->where('mid ='.$distribution['user_id'])->getField('nickname');
+						if($distribution['top_user_id']==0){
+							$distribution['top_user_name']='无';
+							$distribution['top_user_id']='无';
+						}
+						else{
+							$distribution['top_user_name']=$user->where('mid ='.$distribution['top_user_id'])->getField('nickname');
+
+						}
 					}else{
 						$this->error('缺少id',U('shop/distribution'));
 					}
 
 					$builder->title('修改分销用户信息')
 						->keyId()
-						->keyInteger('user_id', '用户ID')
+						->keyReadOnly('user_id', '用户ID')
+						->keyReadOnly('user_name', '用户名')
+						->keyInteger('phone', '银行卡号')
 						->keyInteger('top_user_id', '上级用户ID')
+						->keyReadOnly('top_user_name', '上级用户名')
 						->keyInteger('total_person', '下级人数')
 						->keyRadio('level','分销等级','',array('1'=>'1级','2'=>'2级','3'=>'3级'))
 						->keyRadio('status','分销状态','',array('2'=>'禁用','1'=>'启用'))
@@ -2142,6 +2182,24 @@ class ShopController extends AdminController
 				$option['orderby'] = I('orderby');
 				$option['level'] = I('level');
 				$list = $this->distribution_model->get_distribution_list($option);
+				$user = M('ucuser');
+				foreach($list['list'] as &$val){
+					$val['bank_name']=$user->where('mid ='.$val['user_id'])->getField('bank_name');
+					$val['bank_number']=$user->where('mid ='.$val['user_id'])->getField('bank_number');
+					if(!$val['bank_name']){
+						$val['bank_name']='未填写';
+					}
+					if(!$val['bank_number']){
+						$val['bank_number']='未填写';
+					}
+					if($val['top_user_id']==0){
+						$val['top_user_name']='无';
+						$val['top_user_id']='无';
+					}
+					else{
+						$val['top_user_name']=$user->where('mid ='.$val['top_user_id'])->getField('nickname');
+					}
+				}
 				$orderby_select = array(
 						array('id' => '', 'value' => '按用户ID'),
 						array('id' => 'create_time', 'value' => '按加入时间'),
@@ -2182,7 +2240,10 @@ class ShopController extends AdminController
 
 				$builder
 					->keyText('user_id','用户ID')
+					->keyText('bank_name','用户名')
+					->keyText('bank_number','银行卡号')
 					->keyText('top_user_id','上级用户ID')
+					->keyText('top_user_name','上级用户名')
 					->keyMap('level','分销等级',$level_show)
 					->keyText('total_person','下级人数')
 					->keyMap('status','分销状态',$status_show)
@@ -2233,13 +2294,22 @@ class ShopController extends AdminController
 				$builder
 					->keyRadio('levelid','适用等级','',array('1'=>'1级','2'=>'2级','3'=>'3级'))
 					->keyText('rulefunction','计算公式')
-					->keyText('percent','分成比例')
-					->keyText('fixed','固定数额分成')
+					->keyText('percent','分成比例%')
+					->keyText('fixed','固定数额分成(单位：分)')
 					->keyRadio('status','启用状态','',array('2'=>'禁用','1'=>'启用'))
 					->data($rules)
 					->buttonSubmit(U('shop/distribution_rules',array('action'=>'edit')))
 					->buttonBack()
 					->display();
+			}
+		}else if($action == 'delete') {
+			$id = I('id');
+			$ret = $this->distribution_rules_model->delete_rules($id);
+			if ($ret){
+				$this->success('操作成功。', U('shop/distribution_rules'));
+			}
+			else{
+				$this->error('操作失败。');
 			}
 		}else{
 			$option['page'] = I('page',1);
@@ -2268,7 +2338,8 @@ class ShopController extends AdminController
 				->keyText('fixed','固定数额分成')
 				->keyMap('status','启用状态',$status_show)
 				->keyMap('levelid','适用等级',$level_show)
-				->keyDoAction('admin/shop/distribution_rules/action/edit/id/###','编辑');
+				->keyDoAction('admin/shop/distribution_rules/action/edit/id/###','编辑')
+			    ->keyDoAction('admin/shop/distribution_rules/action/delete/id/###','删除');
 			$builder
 				->data($rules['list'])
 				->pagination($totalCount, $option['r'])
@@ -2277,7 +2348,7 @@ class ShopController extends AdminController
 	}
 
 	//分销收益明细
-	public function distribution_orders($action= '')
+	public function distribution_orders($action= '',$ids=NULL)
 	{
 		if($action == 'settle'){
 			$unsettle['status'] = 1;
@@ -2286,8 +2357,10 @@ class ShopController extends AdminController
 			foreach ($unsettle_orders['list'] as $row) {
 				$data['mid'] = $row['mid'];
 				$data['amount'] = $row['amount'];
-				$ret = $this->distribution_profit_model->add_or_edit_profit($data);
-				if (!$ret){
+				$ret1 = $this->distribution_profit_model->add_or_edit_profit($data);
+				//$sql = $this->distribution_profit_model->getLastSql();
+				//trace($ret1,'测试unsettle_orders','DEBUG',true);
+				if (!$ret1){
 					$this->error('结算失败。');
 				}
 			}
@@ -2298,7 +2371,28 @@ class ShopController extends AdminController
 			else{
 				$this->error('结算失败。');
 			}
-		}else if($action == 'delete'){
+		}else if($action == 'settlesome'){
+			$ids = I('ids');
+			$unsettle_orders = $this->distribution_orders_model->get_distribution_orders_by_ids($ids);
+			//$sql = $this->distribution_orders_model->getLastSql();
+			//$this->error($sql.'输出');
+			foreach ($unsettle_orders as $row) {
+				$data['mid'] = $row['mid'];
+				$data['amount'] = $row['amount'];
+				$ret1 = $this->distribution_profit_model->add_or_edit_profit($data);
+				//$sql = $this->distribution_profit_model->getLastSql();
+				if (!$ret1){
+					$this->error('结算失败。');
+				}
+			}
+			$ret = $this->distribution_orders_model->settlesome_distribution_orders($ids);
+			if ($ret){
+				$this->success('结算成功。', U('shop/distribution_orders'));
+			}
+			else{
+				$this->error('结算失败。');
+			}
+		} else if($action == 'delete'){
 			$ids = I('ids');
 			$ret = $this->distribution_orders_model->delete_distribution_orders($ids);
 			if ($ret){
@@ -2317,6 +2411,10 @@ class ShopController extends AdminController
 			$option['levelid'] = I('levelid');
 			$option['orderby'] = I('orderby');
 			$orders = $this->distribution_orders_model->get_distribution_orders_list($option);
+			$user = M('ucuser');
+			foreach($orders['list'] as &$val){
+				$val['mid_name']=$user->where('mid ='.$val['mid'])->getField('nickname');
+			}
 			$orderby_select = array(
 					array('id' => '', 'value' => '按创建时间'),
 					array('id' => 'amount', 'value' => '按收益金额'),
@@ -2357,11 +2455,13 @@ class ShopController extends AdminController
 				->select('排序：', 'orderby', 'select', '', '', '', $orderby_select)
 				->buttonNew(U('shop/distribution_orders'), '全部')
 				->buttonNew(U('shop/distribution_orders',array('action'=>'settle')),'结算所有')
+				->ajaxButton(U('shop/distribution_orders',array('action'=>'settlesome')),'','结算')
 				->ajaxButton(U('shop/distribution_orders',array('action'=>'delete')),'','删除');
 
 			$builder
 				->keyId()
-				->keyText('mid','粉丝ID')
+				->keyText('mid','用户ID')
+				->keyText('mid_name','用户名')
 				->keyText('orderid','订单ID')
 				->keyText('from_mid','来源粉丝ID')
 				->keyMap('levelid','分销等级',$level_show)
@@ -2414,12 +2514,33 @@ class ShopController extends AdminController
 				$this->assign('mid', $profit['mid']);
 				$this->display('Shop@Shop/withdraw_modal');
 			}
-		}else{
+		}else if($action == 'excel'){
+			//输出excel
+			$profits = $this->distribution_profit_model->get_profit_list();
+			$user = M('ucuser');
+			foreach($profits['list'] as &$val){
+				$val['mid_name'] = $user->where('mid ='.$val['mid'])->getField('nickname');
+				$distribution = $this->distribution_model->get_distribution_by_uid($val['mid']);
+				$val['phone'] = $distribution['phone'];
+				$val['level'] = $distribution['level'];
+				$val['sum'] = $val['sum']/100;
+				$val['withdraw'] = $val['withdraw']/100;
+			}
+			//$this->error('excel'.$profits['count']);
+			$date = date('Y-m-d H:i:s',time());
+			$filename = '分销收益统计列表'.$date;
+			$this->orderExcel($profits['list'],$filename);
+
+		} else{
 			$option['page'] = I('page',1);
 			$option['r'] = I('r',15);
 			$option['mid'] = I('mid');
 			$option['orderby'] = I('orderby');
 			$profits = $this->distribution_profit_model->get_profit_list($option);
+			$user = M('ucuser');
+			foreach($profits['list'] as &$val){
+				$val['mid_name']=$user->where('mid ='.$val['mid'])->getField('nickname');
+			}
 			$orderby_select = array(
 					array('id' => '', 'value' => '按粉丝ID'),
 					array('id' => 'sum', 'value' => '按收益总额'),
@@ -2433,11 +2554,13 @@ class ShopController extends AdminController
 				->setSearchPostUrl(U('shop/distribution_profit'))
 				->search('', 'mid', 'text', '粉丝id', '', '', '')
 				->select('排序：', 'orderby', 'select', '', '', '', $orderby_select)
-				->buttonNew(U('shop/distribution_profit'), '全部');
+				->buttonNew(U('shop/distribution_profit'), '全部')
+			    ->buttonNew(U('shop/distribution_profit',array('action'=>'excel')), '导出EXCEL表');
 
 			$builder
 				->keyId()
 				->keyText('mid','粉丝ID')
+				->keyText('mid_name','用户名')
 				->keyText('sum','收益总额（分）')
 				->keyText('withdraw','可提现金额（分）')
 				->keyTime('create_time','生成时间');
@@ -2458,6 +2581,10 @@ class ShopController extends AdminController
 		$option['op_uid'] = I('op_uid');
 		$option['orderby'] = I('orderby');
 		$withdraws = $this->distribution_withdraw_model->get_withdraw_list($option);
+		$user = M('ucuser');
+		foreach($withdraws['list'] as &$val){
+			$val['mid_name']=$user->where('mid ='.$val['mid'])->getField('nickname');
+		}
 		$orderby_select = array(
 			array('id' => '', 'value' => '按提现时间'),
 			array('id' => 'mid', 'value' => '按粉丝ID'),
@@ -2477,6 +2604,7 @@ class ShopController extends AdminController
 		$builder
 			->keyId()
 			->keyText('mid','粉丝ID')
+			->keyText('mid_name','用户名')
 			->keyText('op_uid','操作人UID')
 			->keyText('amount','提现金额（分）')
 			->keyTime('create_time','提现时间');
@@ -2484,6 +2612,74 @@ class ShopController extends AdminController
 			->data($withdraws['list'])
 			->pagination($totalCount, $option['r'])
 			->display();
+	}
+
+	public function orderExcel($list='',$filename=''){
+        
+		import("Shop.Library.Phpexcel.PHPExcel");
+
+		$objPHPExcel = new \PHPExcel();
+		//创建人
+		$objPHPExcel->getProperties()->setCreator("WanZhong");
+		//最后修改人
+		$objPHPExcel->getProperties()->setLastModifiedBy("WanZhong");
+		//标题
+		$objPHPExcel->getProperties()->setTitle("WanZhong_Profits");
+		//题目
+		$objPHPExcel->getProperties()->setSubject("WanZhong_Profits");
+		//描述
+		$objPHPExcel->getProperties()->setDescription("WanZhong_Profits");
+		//关键字
+		$objPHPExcel->getProperties()->setKeywords("office 2007 openxml php");
+		//种类
+		$objPHPExcel->getProperties()->setCategory("Test result file");
+
+		//设置当前的sheet
+		$objPHPExcel->setActiveSheetIndex(0);
+
+		//设置sheet的name
+		$objPHPExcel->getActiveSheet()->setTitle('WanZhong_Profits');
+
+		//设置单元格的值
+		$objPHPExcel->getActiveSheet()->setCellValue('A1', 'ID');
+		$objPHPExcel->getActiveSheet()->setCellValue('B1', '用户ID');
+		$objPHPExcel->getActiveSheet()->setCellValue('C1', '用户名');
+		$objPHPExcel->getActiveSheet()->setCellValue('D1', '分销等级');
+		$objPHPExcel->getActiveSheet()->setCellValue('E1', '收益总额(元)');
+		$objPHPExcel->getActiveSheet()->setCellValue('F1', '可提现金额(元)');
+		$objPHPExcel->getActiveSheet()->setCellValue('G1', '银行帐号');
+		$o=2;
+		foreach ($list as $v){
+			$objPHPExcel->getActiveSheet()->setCellValue('A'.$o, $v['id']);
+			$objPHPExcel->getActiveSheet()->setCellValue('B'.$o, $v['mid']);
+			$objPHPExcel->getActiveSheet()->setCellValue('C'.$o, $v['mid_name']);
+			$objPHPExcel->getActiveSheet()->setCellValue('D'.$o, $v['level']);
+			$objPHPExcel->getActiveSheet()->setCellValue('E'.$o, $v['sum']);
+			$objPHPExcel->getActiveSheet()->setCellValue('F'.$o, $v['withdraw']);
+			$objPHPExcel->getActiveSheet()->setCellValue('G'.$o, $v['phone']);
+
+			//$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+			//$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(15);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(15);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(15);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(15);
+			$o++;
+		}
+
+		$objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
+		$objWriter->save("orders.xlsx");
+		$objWriter = new \PHPExcel_Writer_Excel5($objPHPExcel);
+		header("Pragma: public");
+		header("Expires: 0");
+		//header("Cache-Control:must-revalidate, post-check=0, pre-check=0");
+		header("Content-Type:application/force-download");
+		header("Content-Type:application/vnd.ms-execl");
+		header("Content-Type:application/octet-stream");
+		header("Content-Type:application/download");
+		header('Content-Disposition:attachment;filename="'.$filename.'.xls"');
+		header("Content-Transfer-Encoding:binary");
+		$objWriter->save('php://output');
 	}
 
 }
