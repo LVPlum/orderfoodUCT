@@ -100,6 +100,28 @@ class ShopProductCatsModel extends Model{
 	}
 
 	/*
+	 * 获取子分类信息
+	 */
+	public function get_product_cats_sun($option)
+	{
+
+		if(isset($option['cat_id']) && $option['cat_id'] > 0) {
+			$where_arr[] = 'parent_id = '.$option['cat_id'];
+		}
+		if(isset($option['status'])) {
+			$where_arr[] = 'status = '.$option['status'];
+		}
+		$where_str ='';
+		if(!empty($where_arr)) {
+			$where_str .= implode(' and ', $where_arr);
+		}
+		$ret['list'] = $this->where($where_str)->order('sort desc, create_time')->page($option['page'],$option['r'])->select();
+		$ret['count'] = $this->where($where_str)->count();
+
+		return $ret;
+	}
+
+	/*
 	 * 获取某个分类信息
 	 */
 	public function get_product_cat_by_id($id)

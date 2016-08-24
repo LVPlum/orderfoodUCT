@@ -1,0 +1,63 @@
+<include file="mobile/Public/header" />
+<style>
+    .suggest-title{  padding: 0.4em 0.6em;  }
+    #suggest-box{
+        width: 95%;
+        height: 12em;
+        border: 0;
+        border-top: thin solid #d9d9d9;
+        border-bottom: thin solid #d9d9d9;
+        padding: 0.4em 2.5%;
+        resize: none;
+        font-size: 16px;
+    }
+</style>
+<header class="color-main vertical-box">
+    <span class="header-title">我的银行卡号</span>
+    <div class="header-left vertical-box">
+        <img class="img-btn" src="__IMG__/back.png" onclick="history.back()">
+    </div>
+    <div class="header-right vertical-box">
+        <img class="img-btn" src="__IMG__/home.png" onclick="window.location.href='{:U('shop/index/index')}'">
+    </div>
+</header>
+<article class="suggest-article">
+    <p class="suggest-title">我的银行卡号 <if condition="$distribution.phone neq null">{$distribution.phone}<else />无</if></p>
+    <p class="suggest-title"><if condition="$distribution.phone neq null">修改银行卡号<else />添加银行卡号</if></p>
+    <input id="suggest-box" style="height:3em;"></input>
+</article>
+<footer class="btn-footer footer-one-btn">
+    <button class="suggest-btn color-primary big-text">确认</button>
+</footer>
+
+<include file="mobile/Public/footer" />
+
+
+<script>
+    seajs.use('zepto', function () {
+        $(document).ready(function () {
+            $(".suggest-btn").click(function () {
+                var text = $("#suggest-box").val();
+                if(text.trim()==""){
+                    showTip(1000,"请输入您的银行卡号。");
+                    return
+                }
+                $.post("{:U('shop/index/bank')}",{brief:text }, function (ret) {
+	                console.log(ret);
+	                ret =  JSON.parse(ret)
+	                if(ret.status==1){
+		                showTip(1000,"操作成功！");
+	                }
+	                else{
+		                showTip('','操作失败，'+ret.info,'');
+	                }
+                    history.back();
+                })
+            })
+        })
+    });
+
+</script>
+</body>
+</html>
+

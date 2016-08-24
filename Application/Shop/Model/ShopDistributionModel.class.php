@@ -21,6 +21,11 @@ class ShopDistributionModel extends Model {
 		}
 		return $ret;
 	}
+	public function add_or_edit_distribution_bank($data)
+	{
+		$ret = $this->where('user_id='.$data['mid'])->save($data);
+		return $ret;
+	}
 
 	public function get_distribution_by_uid($uid)
 	{

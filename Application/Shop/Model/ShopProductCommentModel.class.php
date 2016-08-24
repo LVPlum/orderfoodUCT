@@ -97,5 +97,9 @@ class ShopProductCommentModel extends Model{
 		empty($item['user_id']) || $item['user']=query_user(array('nickname','avatar32'),$item['user_id']);
 		empty($item['images']) || $item['images']=explode(';',$item['images']);
 	}
+	public function delete_product_comment($id){
+		$ret = $this->where('id ='.$id)->delete();
+		return $ret;
+	}
 }
 

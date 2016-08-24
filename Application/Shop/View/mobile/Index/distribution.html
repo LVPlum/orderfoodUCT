@@ -1,0 +1,79 @@
+<include file="mobile/Public/header" />
+
+<link rel="stylesheet" href="__CSS__/fonts.css">
+<link rel="stylesheet" href="__CSS__/detail_font.css">
+<link rel="stylesheet" href="__CSS__/good.css">
+<style>
+    .detail-icon-phone2 {position: relative;top: 2px;}
+    .user-section-p img{ vertical-align: middle;width: 2rem}
+    .user-section-p span{position: relative;top: 3px;margin-left: 1rem}
+    .detail-sort-section{background: white;border-top: thin solid #e2e2e2}
+    .detail-sort-section li{padding: 1rem 0}
+    .order-ball-content{ position: relative;}
+    .order-red-ball{
+        position: absolute;  top:-9px;  right: -15px;
+        display: inline-block;  font-size: 12px;
+        height: 15px;width: 15px;line-height: 15px;
+        background-color: white;  border-radius: 50%;
+        padding:2px;  text-align: center;
+    }
+    /*.order-red-ball{
+        position: absolute;  top:-9px;  right: -15px;
+        display: inline-block;  font-size: 0.5rem;
+        height: 1rem;width: 1rem;line-height: 1rem;
+        background-color: white;  border-radius: 50%;
+        padding:2px;  text-align: center;
+    }*/
+    /*积分和余额*/
+    .more-info{  border-top:thin solid #e2e2e2;}
+    .more-info li{  padding: 0.5em 0;  border-right: thin solid #ddd;  }
+    .more-info li:last-child{  border-right: none;  }
+    .more-info .info-brief{  width: 10em;  margin:0 auto;  text-align: center;  }
+    .more-info .info-value{  margin-top: 0.5em;  font-size: 1em;  }
+</style>
+<header class="color-main vertical-box">
+    <span class="header-title">分销中心</span>
+</header>
+<article class="user-article nav-footer-margin">
+    <section class="good-section linear-section margin-top-section">
+        <div class="good-section-left">
+            <img class="good-section-img bg-avatar" src="<php> echo((!empty($su['avatar32']))?$su['avatar32']:'__IMG__/avatar.png')</php>">
+        </div>
+        <div class="good-section-right border-box">
+            <p>{$ucuser.nickname}</p>
+            <p class="small-text"><span class=" active-font"></span>收益总额：{$profit.sum}（元）可提现金额：{$profit.withdraw}（元）</p>
+        </div>
+    </section>
+    <section class="linear-section linear-noinput last-liner-section margin-bottom" onclick="window.location.href='{:U('shop/index/bank')}'">
+        <p class="user-section-p"><img src="__IMG__/suggest.png"><span>收款银行卡帐号</span></p>
+        <span class="linear-right vertical-box"><span>
+            <img src="__IMG__/go.png">
+        </span></span>
+    </section>
+
+	<!--<section class="linear-section linear-noinput last-liner-section margin-bottom" onclick="window.location.href='{:U('shop/index/')}'">-->
+		<!--<p class="user-section-p"><img src="__IMG__/point.png"><span>提现</span></p>-->
+        <!--<span class="linear-right vertical-box"><span>-->
+            <!--<img src="__IMG__/go.png">-->
+        <!--</span></span>-->
+	<!--</section>-->
+
+
+    <!---->
+</article>
+<include file="mobile/Public/nav-footer" />
+<include file="mobile/Public/footer" />
+
+
+<script>
+    var su = {$su|json_encode};
+    console.log(su);
+    //'jquery' or 'zepto' 脚本入口,按情况选择加载
+    seajs.use('zepto', function () {
+        $(document).ready(function () {
+
+        })
+    });
+</script>
+</body>
+</html>
