@@ -1,0 +1,36 @@
+@charset "UTF-8";
+footer {
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  background: #efeff4;
+  font-family: 黑体;
+  border-top: 1px solid #ccc;
+  font-size: 0.28rem; }
+  footer ul {
+    display: flex;
+    display: -moz-box;
+    /* OLD - Firefox 19- (buggy but mostly works) */
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    width: 100%; }
+    footer ul li {
+      flex: 1;
+      -ms-flex: 1;
+      -webkit-flex: 1;
+      text-align: center;
+      padding: 0.35rem 0px 0.35rem; }
+      footer ul li:before {
+        content: '';
+        width: .23rem;
+        height: .23rem;
+        margin-right: 3px;
+        display: inline-block;
+        vertical-align: baseline;
+        background: url("../images/3.png") no-repeat;
+        background-size: 100%; }
+
+.borderR {
+  border-right: 1px solid #ccc; }
+
+/*# sourceMappingURL=footer.css.map */

@@ -3,131 +3,67 @@
 <link rel="stylesheet" href="__CSS__/fonts.css">
 <link rel="stylesheet" href="__CSS__/swiper/swiper.min.css">
 <link rel="stylesheet" href="__CSS__/swiper.css">
-<header class="color-main vertical-box">
-    <span class="header-title"><php> echo (!empty($shop['title']))? $shop['title']:'请在管理后台设置标题' </php></span>
-    <!--<div class="header-left vertical-box">
-        <img class="img-btn" src="__IMG__/search.png">
-    </div>-->
-</header>
-<notempty name="shop.notice">
-    <aside class="horn-aside linear-section">
-        <span class="horn-icon linear-title vertical-box">
-            <img src="__IMG__/horn.png">
-        </span>
-        <span class="horn-brief linear-title vertical-box" style="">
-            <span class="horn-auto-scroll">{$shop['notice']}</span>
-        </span>
+<link rel="stylesheet" href="__CSS__/menu.css">
+<link rel="stylesheet" href="__CSS__/footer.css">
+<script type="text/javascript" src="__JS__/rem.js"></script>
+  <header class="back">
+    <h1>菜单</h1>
+  </header>
+  <section class="type">
+    <ul>
+      <li class="on">午餐</li>
+      <li>晚餐</li>
+    </ul>
+    <aside class="note">
+      <p>每天上午10:10截止 (9:45之前可取消)</p>
     </aside>
-</notempty>
-<nav>
-    <div class="nav-swiper-container">
-        <div class="swiper-wrapper">
-            <notempty name="cats">
-                <foreach name="slides" item="vo">
-            <!-- <php>
-            if(!empty($slides)){
-                foreach($slides as $s){
-                    </php> -->
-                    <div class="swiper-slide">
-                        <!-- <a href="<php> echo $s['link'] </php>">
-                            <img class="slide-img index-nav-scale" src="<php> echo $s['image'] </php>">
-                        </a> -->
-                        <a href="{$vo.link}">
-                            <img class="slide-img index-nav-scale" src="{$vo.image}">
-                        </a>
-                    </div>
-            <!-- <php>
-                }
-            }
-            </php> -->
-                </foreach>
-            </notempty>
-        </div>
-        <div class="swiper-count-box">
-            <span class="active-index-num">1</span> / <span class="all-index-num">1</span>
-        </div>
-    </div>
-</nav>
-<article class="nav-footer-margin">
-    <empty name="cats.list">
-        <p class="list-bottom-tips">缺少分类，请在管理后台添加</p>
-    <else />
-        <foreach name="cats.list" item="vo">
-    
-            <section class="index-section" data-id="{$vo.id}" onclick="window.location.href='{:U('shop/index/cate_product')}'+'&cat_id='+{$vo.id}">
-                <p class="index-section-title big-text">{$vo.title}</p>
-                <!-- <p class="index-section-title big-text"><php> echo $p['title'] </php></p> --><!--todo:字数限制-->
-                <div class="index-section-pic-box">
-                    <img class="index-section-pic echo-img" data-echo="<php> echo pic($vo['image']) </php>" src="<php> echo pic($vo['image']) </php>">
-                    <div class="section-pic-tips-group">
-                        <php>
-                        $count = 0;
-                        $status = explode(',',$vo['info']);
-                        array_walk($status,
-                            function ($a)
-                            {
-                                switch($a){
-                                case 6:
-                                echo '<p class="section-pic-tips" style="background: #fc7539;">热销</p>';
-                                break;
-                                case 7:
-                                echo '<p class="section-pic-tips" style="background: #7fbf23;">推荐</p>';
-                                break;
-                            }
-                            });
-                        </php>
-                    </div>
-                </div>
-            
-            </section>
-        </foreach>
+  </section>
+  <section>
 
-    </empty>
-</article>
+  </section>
 
-<include file="mobile/Public/nav-footer" />
+<include file="mobile/Public/menu-footer" />
 <include file="mobile/Public/footer" />
-
 <script>
-    var slides = {$cats|json_encode};
-    console.log(slides);
-    var products = {$products|json_encode};
-    console.log(products);
-    //'jquery' or 'zepto' 脚本入口,按情况选择加载
-    seajs.use(['jquery','echo'], function () {
-        $(document).ready(function () {
-            seajs.use('seajs/swiper');
-            $('.add-cart-btn').click(function(e){
-                e.stopPropagation();
-            });
-            seajs.use('transit',function () {
-                /*公告滚动效果*/
-                var scroll_speed = 75;//平均速度，px/秒
-                var delay_time = 1000;//延迟时间
-                $('.horn-auto-scroll').each(function () {
-                    var parent_length = $(this).closest('.horn-aside').width()-40;
-                    var length = $(this).width();
-                    if(length>parent_length){
-                        var scroll_time = length/scroll_speed*1000;
-                        var $this = $(this);
-                        function scroll() {
-                            $this.transition({
-                                'left':'-100%',
-                                'duration':scroll_time,
-                                'delay':delay_time,
-                                'complete': function (ret) {
-                                    $this.css('left',0)
-                                }
-                            })
-                        }
-                        setInterval(function () {
-                            scroll();
-                        },500);
-                    }
-                })
-            });
+  var slides = {$cats|json_encode};
+  console.log(slides);
+  var products = <?php echo(!empty($products) ? json_encode($products) : 'null') ?>;
+  console.log('products',products);
+  //'jquery' or 'zepto' 脚本入口,按情况选择加载
+  seajs.use(['jquery','echo'], function () {
+    $(document).ready(function () {
+      seajs.use('seajs/swiper');
+      $('.add-cart-btn').click(function(e){
+        e.stopPropagation();
+      });
+      seajs.use('transit',function () {
+        /*公告滚动效果*/
+        var scroll_speed = 75;//平均速度，px/秒
+        var delay_time = 1000;//延迟时间
+        $('.horn-auto-scroll').each(function () {
+          var parent_length = $(this).closest('.horn-aside').width()-40;
+          var length = $(this).width();
+          if(length>parent_length){
+            var scroll_time = length/scroll_speed*1000;
+            var $this = $(this);
+            function scroll() {
+              $this.transition({
+                'left':'-100%',
+                'duration':scroll_time,
+                'delay':delay_time,
+                'complete': function (ret) {
+                  $this.css('left',0)
+                }
+              })
+            }
+            setInterval(function () {
+              scroll();
+            },500);
+          }
         })
-    });
+      });
+    })
+  });
 </script>
 </body>
 </html>

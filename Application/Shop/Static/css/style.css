@@ -24,7 +24,7 @@ table{  border-collapse:collapse;/*合并边框模型：*/border-spacing:0;/*边
 body{max-width: 600px;margin: 0 auto;}
 body>footer{max-width: 600px;margin: 0 auto;left: 0;right: 0;}
 /*顶部*/
-body>header{height: 3.75rem;text-align: center;position: relative;z-index: 250;}
+body>header{text-align: center;position: relative;z-index: 250;}
 .header-title{vertical-align: middle;font-size: 1.7rem;}
 .header-left{position: absolute;top: 0;  left: 0;height: 100%;}
 .header-right{position: absolute;top: 0;right: 0;height: 100%;}
@@ -50,7 +50,6 @@ body>footer.nav-footer{
 .icon-title{
     font-size: 1.2rem;
     position: absolute;
-    /*bottom: -15px;*/
     width: 3.6rem;
     text-align: left;
 }
